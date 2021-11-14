@@ -1,5 +1,0 @@
-/Users/vinh/aauni/Software/team8/build-src-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/rebuild_cache.dir
-/Users/vinh/aauni/Software/team8/build-src-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/edit_cache.dir
-/Users/vinh/aauni/Software/team8/build-src-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/src.dir
-/Users/vinh/aauni/Software/team8/build-src-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/src_autogen_timestamp_deps.dir
-/Users/vinh/aauni/Software/team8/build-src-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/src_autogen.dir
