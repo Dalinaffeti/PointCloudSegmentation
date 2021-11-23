@@ -6,3 +6,7 @@
   3.  Mohamed Ali Naffeti
 - Team: 8
 - Semester: WS21/22
+
+Pre-Requirments:
+- For visualization:
+  ./vcpkg/vcpkg install pcl[vtk]:x64-windows --recurse
