@@ -11,11 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6A773768-391F-45C8-8EF1-9A86356B37AE}</ProjectGuid>
+    <ProjectGuid>{2746B830-F35C-4F09-9FE9-5C215FA23129}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+    <ProjectName>PunktwolkenSegmentierung</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -55,16 +56,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>C:\Users\Dalinaffeti\vcpkg\packages\vtk_x64-windows\include\vtk;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Dalinaffeti\vcpkg\packages\vtk_x64-windows\include\vtk-9.0;C:\Users\Dalinaffeti\vcpkg\packages\pcl_x64-windows\include\pcl\visualization;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>C:\Users\Dalinaffeti\vcpkg\packages\pcl_x64-windows\include\pcl\visualization;C:\Users\Dalinaffeti\vcpkg\packages\pcl_x64-windows\include\pcl\visualization\vtk;C:\Users\Dalinaffeti\vcpkg\packages\vtk_x64-windows\include\vtk\vtkRenderWindow.h;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Dalinaffeti\vcpkg\packages\pcl_x64-windows\include\pcl\visualization;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files\PCL 1.12.0\include\pcl\visualization\vtk;C:\Program Files\PCL 1.12.0\include\pcl\visualization;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -92,11 +88,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtRcc Include="PunktewolkeSegmentierung.qrc" />
+    <QtRcc Include="PunktwolkenSegmentierung.qrc" />
     <QtUic Include="pclviewer.ui" />
-    <QtUic Include="PunktewolkeSegmentierung.ui" />
-    <QtMoc Include="PunktewolkeSegmentierung.h" />
-    <ClCompile Include="PunktewolkeSegmentierung.cpp" />
+    <QtUic Include="PunktwolkenSegmentierung.ui" />
+    <QtMoc Include="PunktwolkenSegmentierung.h" />
+    <ClCompile Include="pclviewer.cpp" />
+    <ClCompile Include="PunktwolkenSegmentierung.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

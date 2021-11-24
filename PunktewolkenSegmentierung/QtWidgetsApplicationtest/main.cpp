@@ -1,11 +1,10 @@
-#include "PunktewolkeSegmentierung.h"
+#include "QtWidgetsApplicationtest.h"
 #include <QtWidgets/QApplication>
-#include "pclviewer.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    PunktewolkeSegmentierung w;
+    PunktwolkenSegmentierung w;
     w.show();
     return a.exec();
 }

@@ -23,21 +23,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="PunktewolkeSegmentierung.qrc">
+    <QtRcc Include="PunktwolkenSegmentierung.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="PunktewolkeSegmentierung.ui">
+    <QtUic Include="PunktwolkenSegmentierung.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="PunktewolkeSegmentierung.h">
+    <QtMoc Include="PunktwolkenSegmentierung.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <ClCompile Include="PunktewolkeSegmentierung.cpp">
+    <ClCompile Include="PunktwolkenSegmentierung.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pclviewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
