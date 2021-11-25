@@ -43,6 +43,18 @@
     <ClCompile Include="pclviewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Punktwolke.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Kategorie.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Punkt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="typ.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="pclviewer.h">
@@ -53,5 +65,19 @@
     <QtUic Include="pclviewer.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Punktwolke.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Kategorie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Punkt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="typ.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
