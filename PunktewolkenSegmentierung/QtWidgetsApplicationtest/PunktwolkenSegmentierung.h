@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include "ui_QtWidgetsApplicationtest.h"
+#include "ui_PunktwolkenSegmentierung.h"
 
 class PunktwolkenSegmentierung : public QMainWindow
 {
