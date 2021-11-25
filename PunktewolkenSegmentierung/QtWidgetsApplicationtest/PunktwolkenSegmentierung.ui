@@ -47,7 +47,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="QtWidgetsApplicationtest.qrc"/>
+  <include location="PunktwolkenSegmentierung.qrc"/>
  </resources>
  <connections/>
 </ui>
