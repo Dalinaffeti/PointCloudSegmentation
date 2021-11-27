@@ -12,4 +12,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget *parent)
     progressBar->setMaximum(100);
     progressBar->setValue(80);
     ui.statusBar->addPermanentWidget(progressBar);
+    
+    
 }
+
