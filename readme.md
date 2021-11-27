@@ -39,7 +39,7 @@ Installieren Sie [Qt 5.15.2 mit der msvc2019_64](https://www.qt.io/download) Erw
 
 Installieren in [Qt Visual Studio Tools](https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools-19123)
 
-**clone**
+**Projekt klonen**
 
 Klonen sie das Projekt in ihr Verzeichnis. Das Projekt noch nicht starten.
 
@@ -74,21 +74,27 @@ Falls Sie alle Voraussetzungen erfüllt haben. Starten Sie das Projekt und folge
 
 1. PunktwolkeSegmentierung.sln ~ Datei öffnen
 2. Gehe zu: Erweiterung > Qt VS Tools > Qt Versions: Qt Version auswählen/hinzufügen.
-   Falls noch keine hinzugefügt wurde: 1. Drücke auf: Neue Qt Version hinzufügen 2. Unter Version: Namen eingeben 3. Host: Windows 4. Pfad hinzufügen, wo sich Qt5.15 msvc2019_64 befindet. "C:/Qt/5.15.2/msvc2019_64/" 5. Drücke auf: Ok
+   Falls noch keine hinzugefügt wurde:
+   1. Drücke auf: Neue Qt Version hinzufügen
+   2. Unter Version: Namen eingeben
+   3. Host: Windows
+   4. Pfad hinzufügen, wo sich Qt5.15 msvc2019_64 befindet. "C:/Qt/5.15.2/msvc2019_64/"
+   5. Drücke auf: Ok
 3. Gehe zu: Project > Eigenschaften
-   -> Qt Project Settings:
+
+   > Qt Project Settings:
 
    - Qt Installation: Qt Version auswählen
    - Qt Modules: core;gui;widgets
    - Build Config: Debug
 
-   -> VC++ Directories:
+   > VC++ Directories:
 
    - pcl include pfad einfügen
    - vtk include pfad einfügen
    - qt include pfad einfügen
 
-   -> C/C++
+   > C/C++
 
    - pcl include pfad einfügen
    - vtk include pfad einfügen
