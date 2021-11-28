@@ -112,15 +112,15 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
 
     verticalLayout->addItem(verticalSpacer);
 
-    pushButton = new QPushButton(horizontalLayoutWidget);
-    pushButton->setObjectName(QString::fromUtf8("pushButton"));
-    sizePolicy.setHeightForWidth(pushButton->sizePolicy().hasHeightForWidth());
-    pushButton->setSizePolicy(sizePolicy);
-    pushButton->setMinimumSize(QSize(180, 40));
-    pushButton->setMaximumSize(QSize(180, 40));
-    pushButton->setBaseSize(QSize(180, 40));
+    segBtn = new QPushButton(horizontalLayoutWidget);
+    segBtn->setObjectName(QString::fromUtf8("segBtn"));
+    sizePolicy.setHeightForWidth(segBtn->sizePolicy().hasHeightForWidth());
+    segBtn->setSizePolicy(sizePolicy);
+    segBtn->setMinimumSize(QSize(180, 40));
+    segBtn->setMaximumSize(QSize(180, 40));
+    segBtn->setBaseSize(QSize(180, 40));
 
-    verticalLayout->addWidget(pushButton, 0, Qt::AlignHCenter);
+    verticalLayout->addWidget(segBtn, 0, Qt::AlignHCenter);
 
     verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -197,11 +197,11 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     horizontalLayout->addWidget(pclviewer);
     pclviewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    statusBar->showMessage("whazzup");
+    statusBar->showMessage("Welcome! please begin by importing a file.");
     QProgressBar* progressBar = new QProgressBar(this);
     progressBar->setMinimum(0);
     progressBar->setMaximum(100);
-    progressBar->setValue(80);
+    progressBar->setValue(0);
     statusBar->addPermanentWidget(progressBar);
 
     connect(actionNew, SIGNAL(triggered(bool)), this, SLOT(resetAll()));
@@ -211,6 +211,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     connect(actionDocs, SIGNAL(triggered(bool)), this, SLOT(openDocs()));
 
     connect(importBtn, SIGNAL(clicked()), this, SLOT(importPCFile()));
+    connect(segBtn, SIGNAL(clicked()), this, SLOT(segmentierung()));
 
     resetAll();
 }
@@ -264,7 +265,7 @@ void PunktwolkenSegmentierung::retranslateUi()
     actionDelete->setText(QCoreApplication::translate("QtWidgetsApplicationtestClass", "L\303\266schen", nullptr));
     filename->setPlaceholderText(QCoreApplication::translate("QtWidgetsApplicationtestClass", "Datei Name", nullptr));
     importBtn->setText(QCoreApplication::translate("QtWidgetsApplicationtestClass", "Datei ausw\303\244hlen", nullptr));
-    pushButton->setText(QCoreApplication::translate("QtWidgetsApplicationtestClass", "Segmentieren", nullptr));
+    segBtn->setText(QCoreApplication::translate("QtWidgetsApplicationtestClass", "Segmentieren", nullptr));
     segmentResults->setHtml(QCoreApplication::translate("QtWidgetsApplicationtestClass", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
         "p, li { white-space: pre-wrap; }\n"
@@ -290,6 +291,9 @@ void PunktwolkenSegmentierung::resetAll() {
     actionZoomOut->setEnabled(false);
     actionRotate->setEnabled(false);
     actionSwitchView->setEnabled(false);
+    statusBar->showMessage("Navigation is reseted.");
+
+   
 }
 
 /// <summary>
@@ -309,6 +313,8 @@ void PunktwolkenSegmentierung::exportResults() {
 
 
     return;
+    statusBar->showMessage("results are exported");
+
 }
 
 /// <summary>
@@ -322,9 +328,12 @@ void PunktwolkenSegmentierung::importPCFile() {
     QFile* file = new QFile(fileName);
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::critical(nullptr, "Error", "Can not open the file, wrong permissions");
+        statusBar->showMessage("please try again. An error occurred.");
+
         return;
     }
     pclviewer->createPointCloud(file);
+    statusBar->showMessage("file is loaded");
 }
 
 /// <summary>
@@ -333,4 +342,13 @@ void PunktwolkenSegmentierung::importPCFile() {
 void PunktwolkenSegmentierung::openDocs() {
 
     QDesktopServices::openUrl(QUrl("https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2021-22/team8/-/blob/master/readme.md", QUrl::TolerantMode));
+}
+
+void PunktwolkenSegmentierung::segmentierung(){
+    std::string filename = "PointNet-Segmentierungsnetzwerk.py";
+    std::string command = "python  ";
+    command += filename;
+    system(command.c_str());
+    statusBar->showMessage("segmentation is running");
+
 }

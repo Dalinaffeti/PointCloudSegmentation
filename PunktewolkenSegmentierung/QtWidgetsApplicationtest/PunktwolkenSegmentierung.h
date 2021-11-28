@@ -51,7 +51,7 @@ public:
     QSpacerItem* verticalSpacer_3;
     QPushButton* importBtn;
     QSpacerItem* verticalSpacer;
-    QPushButton* pushButton;
+    QPushButton* segBtn;
     QSpacerItem* verticalSpacer_2;
     QSpacerItem* horizontalSpacer_2;
     QWidget* widget;
@@ -70,5 +70,6 @@ private slots:
     void exportResults();
     void importPCFile();
     void openDocs();
+    void segmentierung();
 };
 
