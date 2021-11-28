@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_PunktwolkenSegmentierung.h"
 
+
 class PunktwolkenSegmentierung : public QMainWindow
 {
     Q_OBJECT
@@ -10,6 +11,13 @@ class PunktwolkenSegmentierung : public QMainWindow
 public:
     PunktwolkenSegmentierung(QWidget *parent = Q_NULLPTR);
 
+
+private slots:
+    void resetAll();
+    void exportResults();
+    void importPCFile();
+    void openDocs();
 private:
     Ui::QtWidgetsApplicationtestClass ui;
+
 };

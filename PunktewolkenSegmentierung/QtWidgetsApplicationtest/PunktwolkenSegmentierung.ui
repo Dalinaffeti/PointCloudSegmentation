@@ -77,7 +77,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QTextBrowser" name="textBrowser">
+        <widget class="QTextBrowser" name="filename">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -259,6 +259,50 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>500</y>
+      <width>802</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QTextBrowser" name="segmentResults">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>110</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>650</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="placeholderText">
+        <string>Segmentierungsresultate</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -266,7 +310,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -299,36 +343,52 @@
     <property name="title">
      <string>Ansicht</string>
     </property>
-    <addaction name="actionReinzoomen"/>
-    <addaction name="actionRauszoomen"/>
-    <addaction name="actionSichtebene_wechseln"/>
-    <addaction name="actionDrehen"/>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoomOut"/>
+    <addaction name="actionSwitchView"/>
+    <addaction name="actionRotate"/>
    </widget>
    <widget class="QMenu" name="menuHilfe">
     <property name="title">
      <string>Hilfe</string>
     </property>
-    <addaction name="actionSiehe_Dokumentation"/>
+    <addaction name="actionDocs"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuBearbeiten"/>
    <addaction name="menuAnsicht"/>
    <addaction name="menuHilfe"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>20</height>
+    </size>
+   </property>
+  </widget>
   <action name="actionNew">
    <property name="text">
     <string>Neu</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionOpen">
    <property name="text">
     <string>Öffnen..</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSave">
    <property name="text">
     <string>Speichern</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionSaveAs">
@@ -340,28 +400,34 @@
    <property name="text">
     <string>Beenden</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
-  <action name="actionSiehe_Dokumentation">
+  <action name="actionDocs">
    <property name="text">
     <string>Siehe Dokumentation</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
   </action>
-  <action name="actionReinzoomen">
+  <action name="actionZoomIn">
    <property name="text">
     <string>Reinzoomen</string>
    </property>
   </action>
-  <action name="actionRauszoomen">
+  <action name="actionZoomOut">
    <property name="text">
     <string>Rauszoomen</string>
    </property>
   </action>
-  <action name="actionSichtebene_wechseln">
+  <action name="actionSwitchView">
    <property name="text">
     <string>Sichtebene wechseln</string>
    </property>
   </action>
-  <action name="actionDrehen">
+  <action name="actionRotate">
    <property name="text">
     <string>Drehen</string>
    </property>
@@ -380,20 +446,32 @@
    <property name="text">
     <string>Ausschneiden</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionCopy">
    <property name="text">
     <string>Kopieren</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionPaste">
    <property name="text">
     <string>Einfügen</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionSelectAll">
    <property name="text">
     <string>Alles auswählen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
   <action name="actionDelete">
