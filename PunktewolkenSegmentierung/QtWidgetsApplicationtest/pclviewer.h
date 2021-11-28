@@ -3,60 +3,30 @@
 #include <iostream>
 
 // Qt
-#include <QMainWindow>
+#include <QtWidgets>
 
 // Point Cloud Library
+#include <QVTKOpenGLStereoWidget.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
-// Visualization Toolkit (VTK)
-#include <vtkRenderWindow.h>
-
 typedef pcl::PointXYZRGBA PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 
-namespace Ui
-{
-  class PCLViewer;
-}
-
-class PCLViewer : public QMainWindow
-{
-  Q_OBJECT
+class PCLViewer : public QVTKOpenGLStereoWidget {
+    Q_OBJECT
 
 public:
-  explicit PCLViewer (QWidget *parent = 0);
-  ~PCLViewer ();
-
-public Q_SLOTS:
-  void
-  randomButtonPressed ();
-
-  void
-  RGBsliderReleased ();
-
-  void
-  pSliderValueChanged (int value);
-
-  void
-  redSliderValueChanged (int value);
-
-  void
-  greenSliderValueChanged (int value);
-
-  void
-  blueSliderValueChanged (int value);
+    explicit PCLViewer(QWidget* parent = 0);
 
 protected:
-  pcl::visualization::PCLVisualizer::Ptr viewer;
-  PointCloudT::Ptr cloud;
+    void refreshView();
 
-  unsigned int red;
-  unsigned int green;
-  unsigned int blue;
+    pcl::visualization::PCLVisualizer::Ptr viewer;
+    PointCloudT::Ptr cloud;
 
-private:
-  Ui::PCLViewer *ui;
-
+public:
+    int point_count;
+    void createPointCloud(QFile* file);
 };

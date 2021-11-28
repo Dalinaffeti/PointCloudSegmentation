@@ -1,121 +1,82 @@
 #include "pclviewer.h"
-#include "ui_pclviewer.h"
+#include <vtkGenericOpenGLRenderWindow.h>
+#include <QVTKOpenGLStereoWidget.h>
+#include <QDebug>
 
-PCLViewer::PCLViewer (QWidget *parent) :
-  QMainWindow (parent),
-  ui (new Ui::PCLViewer)
-{
-  ui->setupUi (this);
-  this->setWindowTitle ("PCL viewer");
 
-  // Setup the cloud pointer
-  cloud.reset (new PointCloudT);
-  // The number of points in the cloud
-  cloud->points.resize (200);
+PCLViewer::PCLViewer(QWidget* parent)
+    : QVTKOpenGLStereoWidget(parent) {
 
-  // The default color
-  red   = 128;
-  green = 128;
-  blue  = 128;
+    point_count = 0;
 
-  // Fill the cloud with some points
-  for (auto& point: *cloud)
-  {
-    point.x = 1024 * rand () / (RAND_MAX + 1.0f);
-    point.y = 1024 * rand () / (RAND_MAX + 1.0f);
-    point.z = 1024 * rand () / (RAND_MAX + 1.0f);
+    // Set up the QVTK window
+    auto renderer = vtkSmartPointer<vtkRenderer>::New();
+    auto rw = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    rw->AddRenderer(renderer);
+    viewer.reset(new pcl::visualization::PCLVisualizer(renderer, rw,
+        "viewer", false));
 
-    point.r = red;
-    point.g = green;
-    point.b = blue;
-  }
+    setRenderWindow(viewer->getRenderWindow());
+    // viewer->setupInteractor(interactor(), rw());
 
-  // Set up the QVTK window
-  viewer.reset (new pcl::visualization::PCLVisualizer ("viewer", false));
-  ui->qvtkWidget->SetRenderWindow (viewer->getRenderWindow ());
-  viewer->setupInteractor (ui->qvtkWidget->GetInteractor (), ui->qvtkWidget->GetRenderWindow ());
-  ui->qvtkWidget->update ();
-
-  // Connect "random" button and the function
-  connect (ui->pushButton_random,  SIGNAL (clicked ()), this, SLOT (randomButtonPressed ()));
-
-  // Connect R,G,B sliders and their functions
-  connect (ui->horizontalSlider_R, SIGNAL (valueChanged (int)), this, SLOT (redSliderValueChanged (int)));
-  connect (ui->horizontalSlider_G, SIGNAL (valueChanged (int)), this, SLOT (greenSliderValueChanged (int)));
-  connect (ui->horizontalSlider_B, SIGNAL (valueChanged (int)), this, SLOT (blueSliderValueChanged (int)));
-  connect (ui->horizontalSlider_R, SIGNAL (sliderReleased ()), this, SLOT (RGBsliderReleased ()));
-  connect (ui->horizontalSlider_G, SIGNAL (sliderReleased ()), this, SLOT (RGBsliderReleased ()));
-  connect (ui->horizontalSlider_B, SIGNAL (sliderReleased ()), this, SLOT (RGBsliderReleased ()));
-
-  // Connect point size slider
-  connect (ui->horizontalSlider_p, SIGNAL (valueChanged (int)), this, SLOT (pSliderValueChanged (int)));
-
-  viewer->addPointCloud (cloud, "cloud");
-  pSliderValueChanged (2);
-  viewer->resetCamera ();
-  ui->qvtkWidget->update ();
+    refreshView();
 }
 
-void
-PCLViewer::randomButtonPressed ()
-{
-  printf ("Random button was pressed\n");
+void PCLViewer::refreshView() { renderWindow()->Render(); }
 
-  // Set the new color
-  for (auto& point: *cloud)
-  {
-    point.r = 255 *(1024 * rand () / (RAND_MAX + 1.0f));
-    point.g = 255 *(1024 * rand () / (RAND_MAX + 1.0f));
-    point.b = 255 *(1024 * rand () / (RAND_MAX + 1.0f));
-  }
+void PCLViewer::createPointCloud(QFile* file) {
+    QTextStream in(file);
 
-  viewer->updatePointCloud (cloud, "cloud");
-  ui->qvtkWidget->update ();
-}
+    QString line;
+    // Title
+    in.readLine();
+    // Version
+    in.readLine();
+    // Fields
+    in.readLine();
+    // Size, I guess bytes per coordinate
+    in.readLine();
+    // Type
+    in.readLine();
+    // Count
+    in.readLine();
+    // Width
+    point_count = in.readLine().split(QChar(' '))[1].toInt();
+    // Height
+    in.readLine();
+    // Viewpoint
+    in.readLine();
+    // Points
+    line = in.readLine();
+    // Data type
+    in.readLine();
 
-void
-PCLViewer::RGBsliderReleased ()
-{
-  // Set the new color
-  for (auto& point: *cloud)
-  {
-    point.r = red;
-    point.g = green;
-    point.b = blue;
-  }
-  viewer->updatePointCloud (cloud, "cloud");
-  ui->qvtkWidget->update ();
-}
+    // Setup the cloud pointer
+    cloud.reset(new PointCloudT);
+    // The number of points in the cloud
+    qDebug() << "Number of points: " << point_count;
+    cloud->resize(point_count);
 
-void
-PCLViewer::pSliderValueChanged (int value)
-{
-  viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, value, "cloud");
-  ui->qvtkWidget->update ();
-}
+    // The default color
+    unsigned int red = 200;
+    unsigned int green = 128;
+    unsigned int blue = 128;
 
-void
-PCLViewer::redSliderValueChanged (int value)
-{
-  red = value;
-  printf ("redSliderValueChanged: [%d|%d|%d]\n", red, green, blue);
-}
+    // Fill the cloud with the file points
+    QStringList coordinates;
+    for (auto& point : *cloud) {
+        coordinates = in.readLine().split(QChar(' '));
+        point.x = coordinates[0].toFloat();
+        point.y = coordinates[1].toFloat();
+        point.z = coordinates[2].toFloat();
+        point.r = red;
+        point.g = green;
+        point.b = blue;
+    }
 
-void
-PCLViewer::greenSliderValueChanged (int value)
-{
-  green = value;
-  printf ("greenSliderValueChanged: [%d|%d|%d]\n", red, green, blue);
-}
+    viewer->removeAllPointClouds();
+    viewer->addPointCloud(cloud, "Point cloud");
+    viewer->resetCamera();
 
-void
-PCLViewer::blueSliderValueChanged (int value)
-{
-  blue = value;
-  printf("blueSliderValueChanged: [%d|%d|%d]\n", red, green, blue);
-}
-
-PCLViewer::~PCLViewer ()
-{
-  delete ui;
+    refreshView();
 }
