@@ -326,7 +326,7 @@ void PunktwolkenSegmentierung::importPCFile() {
         tr("PC Format (*.ply *.asc)"));
 
     QFile* file = new QFile(fileName);
-    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file->open(QIODevice::ReadOnly )) {
         QMessageBox::critical(nullptr, "Error", "Can not open the file, wrong permissions");
         statusBar->showMessage("please try again. An error occurred.");
 
