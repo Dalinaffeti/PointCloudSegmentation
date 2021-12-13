@@ -59,7 +59,7 @@ Nachdem vcpkg geklont wurde, folgende packages installieren:
 ```cmd
 > .\vcpkg\vcpkg install boost-accumulators:x64-windows
 > .\vcpkg\vcpkg install boost-timer:x64-windows
-> .\vcpkg\vcpkg install pcl[openni2,qt,tools,cuda,opengl,vtk]:x64-windows
+> .\vcpkg\vcpkg install pcl[qt,opengl,vtk]:x64-windows
 ```
 
 Damit vcpkg mit Visual Studio funktioniert, führe den folgenden Kommando aus:
