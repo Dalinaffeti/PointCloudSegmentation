@@ -32,7 +32,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>5.15.2_msvc2019_64</QtInstall>
+    <QtInstall>5.15.2</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
@@ -56,7 +56,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>C:\Qt\5.15.2\msvc2019_64\include;C:\Users\Dalinaffeti\vcpkg\packages\vtk_x64-windows\include\vtk-9.0;D:\dev\cpp\vcpkg\packages\vtk_x64-windows\include\vtk-9.0;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Qt\5.15.2\msvc2019_64\include;C:\Users\Dalinaffeti\vcpkg\packages\vtk_x64-windows\include\vtk-9.0;D:\dev\cpp\vcpkg\packages\vtk_x64-windows\include\vtk-9.0;C:\vcpkg\packages\vtk_x64-windows\include\vtk-9.0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <IncludePath>C:\vcpkg\packages\vtk_x64-windows\include\vtk-9.0;C:\Qt\5.15.2\msvc2019_64\include;C:\vcpkg\packages\pcl_x64-windows\include\pcl;C:\vcpkg\packages\pcl_x64-windows\include\pcl\visualization\vtk;C:\Users\Dalinaffeti\vcpkg\packages\pcl_x64-windows\include\pcl\visualization;$(IncludePath)</IncludePath>
