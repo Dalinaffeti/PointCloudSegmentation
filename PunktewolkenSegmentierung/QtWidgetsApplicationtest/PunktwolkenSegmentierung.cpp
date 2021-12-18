@@ -353,7 +353,7 @@ void PunktwolkenSegmentierung::importPCFile() {
 
     //    //pcl::io::loadPLYFile(sfileName, *cloud);
     //    statusBar->showMessage("PLY file was loaded");
-    }
+   // }
 
     QFile* file = new QFile(fileName);
     if (!file->open(QIODevice::ReadOnly )) {
