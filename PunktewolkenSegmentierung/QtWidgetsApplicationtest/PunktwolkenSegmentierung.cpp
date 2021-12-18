@@ -17,6 +17,23 @@
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include <pcl/io/ply_io.h>
+#include <iostream>
+
+#include <filesystem>
+
+
+using std::string;
+
+//string getFileExt(const string s) {
+//
+//    size_t i = s.rfind('.', s.length());
+//    if (i != string::npos) {
+//        return(s.substr(i + 1, s.length() - i));
+//    }
+//
+//    return("");
+//}
 
 PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     : QMainWindow(parent)
@@ -324,6 +341,19 @@ void PunktwolkenSegmentierung::importPCFile() {
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Punktwolke Datei öffnen.."), "",
         tr("PC Format (*.ply *.asc)"));
+    //std::string sfileName = fileName.toUtf8().constData();
+
+    //if (getFileExt(sfileName) == "ply") {
+    //    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    //    pcl::visualization::PCLVisualizer::Ptr viewer;
+    //    
+    //    pcl::PLYReader Reader;
+    //    Reader.read(sfileName, *cloud);
+    //    viewer->addPointCloud(cloud, "Point cloud");
+
+    //    //pcl::io::loadPLYFile(sfileName, *cloud);
+    //    statusBar->showMessage("PLY file was loaded");
+    }
 
     QFile* file = new QFile(fileName);
     if (!file->open(QIODevice::ReadOnly )) {
