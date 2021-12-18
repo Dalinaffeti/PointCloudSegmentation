@@ -197,7 +197,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     horizontalLayout->addWidget(pclviewer);
     pclviewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    statusBar->showMessage("Welcome! please begin by importing a file.");
+    statusBar->showMessage("Willkommen! Bitte eine .ply oder .asc Datei importieren um zu starten.");
     QProgressBar* progressBar = new QProgressBar(this);
     progressBar->setMinimum(0);
     progressBar->setMaximum(100);
@@ -291,7 +291,7 @@ void PunktwolkenSegmentierung::resetAll() {
     actionZoomOut->setEnabled(false);
     actionRotate->setEnabled(false);
     actionSwitchView->setEnabled(false);
-    statusBar->showMessage("Navigation is reseted.");
+    statusBar->showMessage("");
 
    
 }
@@ -313,7 +313,7 @@ void PunktwolkenSegmentierung::exportResults() {
 
 
     return;
-    statusBar->showMessage("results are exported");
+    statusBar->showMessage("Resultate wurden exportiert.");
 
 }
 
@@ -322,18 +322,18 @@ void PunktwolkenSegmentierung::exportResults() {
 /// </summary>
 void PunktwolkenSegmentierung::importPCFile() {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Point Cloud file"), "",
+        tr("Punktwolke Datei öffnen.."), "",
         tr("PC Format (*.ply *.asc)"));
 
     QFile* file = new QFile(fileName);
     if (!file->open(QIODevice::ReadOnly )) {
-        QMessageBox::critical(nullptr, "Error", "Can not open the file, wrong permissions");
-        statusBar->showMessage("please try again. An error occurred.");
+        QMessageBox::critical(nullptr, "Error", "Datei konnte nicht geöffnet werden, keine Rechte!");
+        statusBar->showMessage("Bitte nochmal versuchen. Ein Fehler ist aufgetreten.");
 
         return;
     }
     pclviewer->createPointCloud(file);
-    statusBar->showMessage("file is loaded");
+    statusBar->showMessage("Datei wird geladen");
 }
 
 /// <summary>
@@ -349,6 +349,6 @@ void PunktwolkenSegmentierung::segmentierung(){
     std::string command = "python  ";
     command += filename;
     system(command.c_str());
-    statusBar->showMessage("segmentation is running");
+    statusBar->showMessage("Segmentierung..");
 
 }
