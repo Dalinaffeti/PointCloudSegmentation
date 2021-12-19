@@ -19,6 +19,7 @@ Eine Software um Punktwolken zu visualisieren, analysieren und anschließend ein
 - PointCloudLibrary(PCL) 1.12.0
 - Visualization Toolkit(VTK) 9.1.0
 - C++17-Standard
+- Python 3.8.x
 
 ---
 
@@ -32,6 +33,37 @@ Voraussetzungen:
 4. vcpkg
 5. PCL 1.12.0 + VTK 9.0.1
 6. OpenNI2: Windows 10 SDK (10.0.18362.0)
+7. Python 3.8.x
+
+**Python Installation**
+
+1. Installieren Sie [Python3.8](https://www.python.org/downloads/release/python-380/) den Windows x86-64 executable installer
+
+2. Nach der Installation im Pfad "team8\PunktewolkenSegmentierung\QtWidgetsApplicationtest" eine eigene virtuelle Umgebung anlegen. Öffne anschließend die Kommandozeile als Adminstrator und navigiere zu oben genannten Pfad.
+
+```cmd
+>  cd team8\PunktewolkenSegmentierung\QtWidgetsApplicationtest\
+```
+
+3. Geben Sie anschließend folgendes ein:
+
+```cmd
+>  {path to python.exe} -m venv venv}
+```
+Es muss der komplette Pfad der Python.exe ohne Klammern angegeben werden!
+
+4. Virtuelle Umgebung aktivieren und pip upgraden/installieren
+
+```cmd
+> .\venv\Scripts\activate
+(venv) > python -m pip install --upgrade pip
+```
+
+5. Alle nötigen packages installieren
+
+```cmd
+(venv) > pip install -r requirements.txt"
+```
 
 **Einbindung Qt**
 
@@ -41,7 +73,7 @@ Installieren in [Qt Visual Studio Tools](https://marketplace.visualstudio.com/it
 
 **Projekt klonen**
 
-Klonen sie das Projekt in ihr Verzeichnis. Das Projekt noch nicht starten.
+Klonen Sie das Projekt in ihr Verzeichnis. Das Projekt noch nicht starten.
 
 ```cmd
 > git clone https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2021-22/team8.git
