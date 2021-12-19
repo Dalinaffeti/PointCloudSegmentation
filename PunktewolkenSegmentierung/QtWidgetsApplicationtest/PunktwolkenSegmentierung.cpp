@@ -19,8 +19,10 @@
 #include <QtWidgets/QWidget>
 #include <pcl/io/ply_io.h>
 #include <iostream>
-
+#include <pcl/io/ascii_io.h>
 #include <filesystem>
+#include <pcl/io/file_io.h>
+using namespace pcl::io;
 
 
 using std::string;
@@ -335,13 +337,13 @@ void PunktwolkenSegmentierung::exportResults() {
 
     }
 }
-
+QString fileName;
 
 /// <summary>
 /// Import der Punktwolke
 /// </summary>
 void PunktwolkenSegmentierung::importPCFile() {
-    QString fileName = QFileDialog::getOpenFileName(this,
+     fileName = QFileDialog::getOpenFileName(this,
         tr("Punktwolke Datei öffnen"), "",
         tr("PC Format (*.ply *.asc)"));
     //std::string sfileName = fileName.toUtf8().constData();
@@ -378,7 +380,23 @@ void PunktwolkenSegmentierung::openDocs() {
 }
 
 void PunktwolkenSegmentierung::segmentierung(){
-   
+    QFileInfo* info = new QFileInfo(fileName);
+    if (info->completeSuffix() == QString("asc")) {
+        statusBar->showMessage("ASCII zu PLY Export gestartet..");
+        const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+        const std::string src = fileName.toStdString();
+        
+        pcl::ASCIIReader Reader;
+        Reader.read(src, *cloud);
+        std::string pfile = "./examples/Quadrat.ply";
+       
+        savePLYFileASCII(pfile, *cloud);    
+    }
+    if (QFile::exists("./examples/Quadrat.ply"))
+    {
+        QFile::remove("./examples/Quadrat.ply");
+    }
+    QFile::copy(fileName, "./examples/Quadrat.ply");
    
     system(".\\venv\\Scripts\\activate && py PointNet-Segmentierungsnetzwerk.py ");
  
