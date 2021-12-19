@@ -184,34 +184,32 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     setStatusBar(statusBar);
 
     menuBar->addAction(menuFile->menuAction());
-    menuBar->addAction(menuBearbeiten->menuAction());
-    menuBar->addAction(menuAnsicht->menuAction());
+    
+   
     menuBar->addAction(menuHilfe->menuAction());
     menuFile->addAction(actionNew);
     menuFile->addAction(actionOpen);
     menuFile->addSeparator();
-    menuFile->addAction(actionSave);
     menuFile->addAction(actionSaveAs);
     menuFile->addSeparator();
     menuFile->addAction(actionExit);
-    menuBearbeiten->addAction(actionUndo);
-    menuBearbeiten->addAction(actionRedo);
     menuBearbeiten->addSeparator();
-    menuBearbeiten->addAction(actionCut);
-    menuBearbeiten->addAction(actionCopy);
-    menuBearbeiten->addAction(actionPaste);
-    menuBearbeiten->addAction(actionDelete);
     menuBearbeiten->addSeparator();
     menuBearbeiten->addAction(actionSelectAll);
-    menuAnsicht->addAction(actionZoomIn);
-    menuAnsicht->addAction(actionZoomOut);
-    menuAnsicht->addAction(actionSwitchView);
-    menuAnsicht->addAction(actionRotate);
     menuHilfe->addAction(actionDocs);
-
     retranslateUi();
     QObject::connect(actionExit, &QAction::triggered, this, qOverload<>(&QMainWindow::close));
     QObject::connect(actionSave, &QAction::triggered, this, qOverload<>(&QMainWindow::update));
+
+   
+
+   
+   
+   
+    
+   
+
+   
 #pragma endregion
 
     pclviewer = new PCLViewer();
@@ -321,22 +319,23 @@ void PunktwolkenSegmentierung::resetAll() {
 /// Exportieren der Punktwolke
 /// </summary>
 void PunktwolkenSegmentierung::exportResults() {
+    QString file = QFileDialog::getSaveFileName(this,
+        tr("SegmentResults speichern "), "", tr("SegmentResults (*.txt);;All Files (*)"));
+    if (!file.isEmpty())
+    {
+        QString mFilename = file;
+        QFile sFile(mFilename);
+        if (sFile.open(QFile::WriteOnly | QFile::Text))
+        {
+            QTextStream out(&sFile);
+            out << segmentResults->toPlainText();
+            sFile.flush();
+            sFile.close();
+        }
 
-    // If abfrage: wenn keine resultate bzw. keine Punktwolke hochgeladen wurde/ nichts zum speichern/export gibt, Error Message box
-    QMessageBox box;
-    box.setText("Keine Datei zum Exportieren!");
-    box.setIcon(QMessageBox::Critical);
-    box.addButton("OK", QMessageBox::AcceptRole);
-    box.exec();
-
-    // else export segementresults -> Dateiformat sollte ply oder asc sein
-    // https://docs.fileformat.com/3d/ply/ - beispiel wie eine .ply aussieht https://people.sc.fsu.edu/~jburkardt/data/ply/ply.html
-
-
-    return;
-    statusBar->showMessage("Resultate wurden exportiert.");
-
+    }
 }
+
 
 /// <summary>
 /// Import der Punktwolke
