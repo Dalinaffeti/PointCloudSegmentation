@@ -41,7 +41,7 @@
 import warnings
 warnings.simplefilter(action='ignore')
 
-get_ipython().run_line_magic('matplotlib', 'notebook')
+#get_ipython().run_line_magic('matplotlib', 'notebook')
 
 import numpy as np
 import os
@@ -347,7 +347,7 @@ model.compile(optimizer='adam',
 # load TRAIN points and labels
 path = os.getcwd()
 train_path = os.path.join(path, "Seg_Prep")
-filename = s + "train.h5"
+filename = s + "test.h5"
 
 train_points = None
 train_labels = None
@@ -395,19 +395,19 @@ test_labels_r = test_labels.reshape(-1, num_points, k)
 # In[21]:
 
 
-# train model
-for i in range(21):
-    # rotate and jitter point cloud every epoch
-    # train_points_rotate = rotate_point_cloud(train_points_r)
-    # train_points_jitter = jitter_point_cloud(train_points_r, 10, 20)
-    model.fit(train_points_r, train_labels_r, batch_size=128, epochs=1, shuffle=True, verbose=1)
-    e = "Current epoch is:" + str(i)
-    print(e)
-    # evaluate model
-    if i % 1 == 0:
-        score = model.evaluate(test_points_r, test_labels_r, verbose=1)
-        print('Test loss: ', score[0])
-        print('Test accuracy: ', score[1])
+# # train model
+# for i in range(21):
+#     # rotate and jitter point cloud every epoch
+#     # train_points_rotate = rotate_point_cloud(train_points_r)
+#     # train_points_jitter = jitter_point_cloud(train_points_r, 10, 20)
+#     model.fit(train_points_r, train_labels_r, batch_size=128, epochs=1, shuffle=True, verbose=1)
+#     e = "Current epoch is:" + str(i)
+#     print(e)
+#     # evaluate model
+#     if i % 1 == 0:
+#         score = model.evaluate(test_points_r, test_labels_r, verbose=1)
+#         print('Test loss: ', score[0])
+#         print('Test accuracy: ', score[1])
 
 
 # ## Visualisierung
@@ -431,8 +431,9 @@ for i in range(21):
 
 from open3d import *
 
+
 # Read .ply file
-input_file = "_t.ply"
+input_file = "./examples/Quadrat.ply"
 pcd = open3d.io.read_point_cloud(input_file) # Read the point cloud
 pcd = pcd.voxel_down_sample(voxel_size=10.0)
 print(pcd.points)
@@ -454,6 +455,8 @@ print(point_cloud_in_numpy.shape)
 fig = plt.figure(figsize=(3,3))
 ax = fig.add_subplot(111, projection='3d')
 
+
+
 # set marker style and color
 color = ['r', 'g', 'c', 'y', 'm']
 m= ['o', 'v', '<', '>', 's']
@@ -462,17 +465,30 @@ m= ['o', 'v', '<', '>', 's']
 for d_num in range(1):
     v_points = test_points_r[d_num:d_num+1,:,:]
     #v_points = point_cloud_in_numpy[None, :, :]
-    #print('v_points.shape: ', v_points[0].shape)
+    print('v_points.shape: ', v_points[0].shape)
     #pcd = open3d.geometry.PointCloud()
     #pcd.points = open3d.utility.Vector3dVector(v_points[0])
     #open3d.io.write_point_cloud("./data.ply", pcd)
     
-    #print(v_points.shape)
+    print(v_points.shape)
 
     pred = model.predict(v_points)
     pred = np.squeeze(pred)
     v_points = np.squeeze(v_points)
     pred = pred.tolist()
+
+    print(v_points)
+    print(len(pred))
+    
+   # pred.sort()
+
+    textfile = open("./examples/test.txt", "w")
+    for pre in range(len(pred)):
+       textfile.write(str(pred[pre]) + "\n")
+      
+  
+  #   for pre in range(len(pred)):
+  #       print(pred[pre])
 
     # add data to plot
     for i in range(v_points.shape[0]):
@@ -483,19 +499,18 @@ for d_num in range(1):
         ax.scatter(xs, zs, ys, c=color[ind], marker=m[ind])
 
     # set axis labels and limits
-    #ax.set_xlim3d(-3100,3100)
-    #ax.set_ylim3d(-3100,3100)
-    #ax.set_zlim3d(-3100,3100)
+    ax.set_xlim3d(-3100,3100)
+    ax.set_ylim3d(-3100,3100)
+    ax.set_zlim3d(-3100,3100)
 
     ax.set_xlabel('X')
     ax.set_ylabel('Z')
     ax.set_zlabel('Y')   
 
-    plt.show()
-    #plt.savefig('test_50_epochs/plot_50_epochs.' + str(d_num) + '.pdf')
+    #plt.show()
+    plt.savefig('./examples/test'+ '.pdf')
     #plt.cla()
     #print('d_num:', d_num)
-
 
 # Quellen: 
 # 
