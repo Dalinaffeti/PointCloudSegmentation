@@ -379,10 +379,11 @@ void PunktwolkenSegmentierung::openDocs() {
 }
 
 void PunktwolkenSegmentierung::segmentierung(){
-    std::string filename = "PointNet-Segmentierungsnetzwerk.py";
-    std::string command = "python  ";
-    command += filename;
-    system(command.c_str());
+   
+   
+    system(".\\venv\\Scripts\\activate && py PointNet-Segmentierungsnetzwerk.py ");
+ 
+
     statusBar->showMessage("Segmentierung gestartet..");
 
 }
