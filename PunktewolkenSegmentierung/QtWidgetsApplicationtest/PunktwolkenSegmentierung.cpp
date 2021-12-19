@@ -187,7 +187,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     
    
     menuBar->addAction(menuHilfe->menuAction());
-    menuFile->addAction(actionNew);
+    
     menuFile->addAction(actionOpen);
     menuFile->addSeparator();
     menuFile->addAction(actionSaveAs);
