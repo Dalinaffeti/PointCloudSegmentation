@@ -447,6 +447,9 @@ print(ch_arr.shape)
 point_cloud_in_numpy = point_cloud_in_numpy[ch_arr, :]
 print(point_cloud_in_numpy.shape)
 
+numpyfile = open("./SegmentLog/npdata.txt", "w")
+for nmpy in range(len(ch_arr)):
+  numpyfile.write(str(ch_arr[nmpy]) + "\n")
 
 # In[24]:
 
@@ -464,25 +467,28 @@ m= ['o', 'v', '<', '>', 's']
 # select test data to visualize
 for d_num in range(1):
     v_points = test_points_r[d_num:d_num+1,:,:]
-    #v_points = point_cloud_in_numpy[None, :, :]
+    v_points = point_cloud_in_numpy[None, :, :]
     print('v_points.shape: ', v_points[0].shape)
-    #pcd = open3d.geometry.PointCloud()
-    #pcd.points = open3d.utility.Vector3dVector(v_points[0])
-    #open3d.io.write_point_cloud("./data.ply", pcd)
-    
-    print(v_points.shape)
+    pcd = open3d.geometry.PointCloud()
+    pcd.points = open3d.utility.Vector3dVector(v_points[0])
+    open3d.io.write_point_cloud("./SegmentLog/data.ply", pcd)
+
 
     pred = model.predict(v_points)
     pred = np.squeeze(pred)
     v_points = np.squeeze(v_points)
     pred = pred.tolist()
 
-    print(v_points)
-    print(len(pred))
+   # print(v_points)
+   # print(len(pred))
     
-   # pred.sort()
+   # all v_points in a txt file => vpointsfile.txt
+    vpfile = open("./SegmentLog/vpointsfile.txt", "w")
+    for test in range(len(v_points)):
+      vpfile.write(str(v_points[test]) + "\n")
 
-    textfile = open("./examples/test.txt", "w")
+  # all pred data in a txt file => preddata.txt
+    textfile = open("./SegmentLog/preddata.txt", "w")
     for pre in range(len(pred)):
        textfile.write(str(pred[pre]) + "\n")
       
@@ -491,12 +497,26 @@ for d_num in range(1):
   #       print(pred[pre])
 
     # add data to plot
+    colorfile = open("./SegmentLog/colortest.txt", "w")
+    vpsqfile = open("./SegmentLog/vpsq.txt" , "w")
     for i in range(v_points.shape[0]):
         xs = v_points[i,0]
         ys = v_points[i,1]
         zs = v_points[i,2]
-        ind = pred[i].index(max(pred[i]))
+        ind = pred[i].index(max(pred[i]))   
         ax.scatter(xs, zs, ys, c=color[ind], marker=m[ind])
+       # print(str(pred[i].index(max(pred[i]))) + "ind \n")
+       # print(str(pred[i]) + " pred i \n")
+        colorfile.write(str(color[ind]) + "\n")
+  
+  # Segment Results in a txt file => segmentresults.txt
+    segmentres = open("./SegmentLog/segmentresults.txt", "w")
+    for k in range(v_points.shape[0]):
+        xs = v_points[k,0]
+        ys = v_points[k,1]
+        zs = v_points[k,2]
+        ind = pred[i].index(max(pred[i])) 
+        segmentres.write(str(xs) + " " + str(ys) + " " + str(zs) + " " +  str(color[ind]) + " " + str(m[ind]) + "\n")  
 
     # set axis labels and limits
     ax.set_xlim3d(-3100,3100)
@@ -508,7 +528,7 @@ for d_num in range(1):
     ax.set_zlabel('Y')   
 
     #plt.show()
-    plt.savefig('./examples/test'+ '.pdf')
+    plt.savefig('./SegmentLog/latestSegmentPicture'+ '.pdf')
     #plt.cla()
     #print('d_num:', d_num)
 
