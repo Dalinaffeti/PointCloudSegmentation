@@ -35,35 +35,6 @@ Voraussetzungen:
 6. OpenNI2: Windows 10 SDK (10.0.18362.0)
 7. Python 3.8.x
 
-**Python Installation**
-
-1. Installieren Sie [Python3.8](https://www.python.org/downloads/release/python-380/) den Windows x86-64 executable installer
-
-2. Nach der Installation im Pfad "team8\PunktewolkenSegmentierung\QtWidgetsApplicationtest" eine eigene virtuelle Umgebung anlegen. Öffne anschließend die Kommandozeile als Adminstrator und navigiere zu oben genannten Pfad.
-
-```cmd
->  cd team8\PunktewolkenSegmentierung\QtWidgetsApplicationtest\
-```
-
-3. Geben Sie anschließend folgendes ein:
-
-```cmd
->  {path to python.exe} -m venv venv}
-```
-Es muss der komplette Pfad der Python.exe ohne Klammern angegeben werden!
-
-4. Virtuelle Umgebung aktivieren und pip upgraden/installieren
-
-```cmd
-> .\venv\Scripts\activate
-(venv) > python -m pip install --upgrade pip
-```
-
-5. Alle nötigen packages installieren
-
-```cmd
-(venv) > pip install -r requirements.txt"
-```
 
 **Einbindung Qt**
 
@@ -99,6 +70,37 @@ Damit vcpkg mit Visual Studio funktioniert, führe den folgenden Kommando aus:
 ```cmd
 > .\vcpkg\vcpkg integrate install
 ```
+
+**Python Installation**
+
+1. Installieren Sie [Python3.8](https://www.python.org/downloads/release/python-380/) den Windows x86-64 executable installer
+
+2. Nach der Installation im Pfad "team8\PunktewolkenSegmentierung\QtWidgetsApplicationtest" eine eigene virtuelle Umgebung anlegen. Öffne anschließend die Kommandozeile als Adminstrator und navigiere zu oben genannten Pfad.
+
+```cmd
+>  cd team8\PunktewolkenSegmentierung\QtWidgetsApplicationtest\
+```
+
+3. Geben Sie anschließend folgendes ein:
+
+```cmd
+>  {path to python.exe} -m venv venv}
+```
+Es muss der komplette Pfad der Python.exe ohne Klammern angegeben werden!
+
+4. Virtuelle Umgebung aktivieren und pip upgraden/installieren
+
+```cmd
+> .\venv\Scripts\activate
+(venv) > python -m pip install --upgrade pip
+```
+
+5. Alle nötigen packages installieren
+
+```cmd
+(venv) > pip install -r requirements.txt
+```
+
 
 **Start**
 
