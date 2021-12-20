@@ -78,13 +78,21 @@ void PCLViewer::createPointCloud(QFile* file) {
         QStringList coordinates;
         for (auto& point : *cloud) {
             coordinates = in.readLine().split(QChar(' '));
-           // if(coordinates.size)
-            point.x = coordinates[0].toFloat();
-            point.y = coordinates[1].toFloat();
-            point.z = coordinates[2].toFloat();
-            point.r = coordinates[3].toInt();
-            point.g = coordinates[4].toInt();
-            point.b = coordinates[5].toInt();
+            if (coordinates.size() <= 3) {
+                point.x = coordinates[0].toFloat();
+                point.y = coordinates[1].toFloat();
+                point.z = coordinates[2].toFloat();
+                point.r = red;
+                point.g = green;
+                point.b = blue;
+           }else {
+                point.x = coordinates[0].toFloat();
+                point.y = coordinates[1].toFloat();
+                point.z = coordinates[2].toFloat();
+                point.r = coordinates[3].toInt();
+                point.g = coordinates[4].toInt();
+                point.b = coordinates[5].toInt();
+            }
             
         }
 
