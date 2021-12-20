@@ -46,7 +46,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
 
     resize(800, 650);
     setMinimumSize(QSize(800, 650));
-    setMaximumSize(QSize(800, 650));
+    
     setBaseSize(QSize(800, 650));
     actionNew = new QAction(this);
     actionNew->setObjectName(QString::fromUtf8("actionNew"));
