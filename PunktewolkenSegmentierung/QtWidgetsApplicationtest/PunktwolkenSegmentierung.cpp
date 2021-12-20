@@ -362,12 +362,12 @@ void PunktwolkenSegmentierung::importPCFile() {
    // }
 
     QFile* file = new QFile(fileName);
-    if (!file->open(QIODevice::ReadOnly )) {
+   /* if (!file->open(QIODevice::ReadOnly )) {
         QMessageBox::critical(nullptr, "Error", "Datei konnte nicht geffnet werden, keine Rechte!");
         statusBar->showMessage("Bitte nochmal versuchen. Ein Fehler ist aufgetreten.");
 
         return;
-    }
+    }*/
     pclviewer->createPointCloud(file);
     statusBar->showMessage("Datei wird geladen");
 }
@@ -408,11 +408,7 @@ void PunktwolkenSegmentierung::segmentierung(){
     // Automatisches Importieren der neuen .asc file - aus /SegmentLog/coloredPC.asc
     // Anschließend die SegmentResultslog.txt in der Segmentresult textbox anzeigen lassen
 
-    /*QString coloredPCpath = "SegmentLog/coloredPC.asc";
-    QFile* endResult = new QFile(coloredPCpath);
-    
-    pclviewer->createPointCloud(endResult);*/
-
+   
     // Anzeigen der Segment Resultate:
     
     QFile segmentResultfile("./SegmentLog/segmentResultslog.txt");
@@ -421,6 +417,13 @@ void PunktwolkenSegmentierung::segmentierung(){
     QString content = stream.readAll();
     segmentResultfile.close();
     segmentResults->setText(content);
+
+    QString coloredPCpath = "./SegmentLog/coloredPC.asc";
+    
+    QFile* endResult = new QFile(coloredPCpath);
+
+    pclviewer->createPointCloud(endResult);
+
 
     statusBar->showMessage("Segmentierung beendet.");
     

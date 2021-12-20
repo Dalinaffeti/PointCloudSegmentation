@@ -25,6 +25,13 @@ PCLViewer::PCLViewer(QWidget* parent)
 void PCLViewer::refreshView() { renderWindow()->Render(); }
 
 void PCLViewer::createPointCloud(QFile* file) {
+
+   
+    if (!file->open(QIODevice::ReadOnly))
+    {
+        std::cerr << "error" << std::endl;
+        return;
+    }
     QTextStream in(file);
 
     QFileInfo* info = new QFileInfo(*file);
@@ -45,7 +52,10 @@ void PCLViewer::createPointCloud(QFile* file) {
         // Count
         in.readLine();
         // Width
-        point_count = in.readLine().split(QChar(' '))[1].toInt();
+        QString test = in.readLine();
+        std::cout << "blabla " << test.toStdString() << std::endl;
+        point_count = test.split(QChar(' '))[1].toInt();
+        
         // Height
         in.readLine();
         // Viewpoint
@@ -68,6 +78,7 @@ void PCLViewer::createPointCloud(QFile* file) {
         QStringList coordinates;
         for (auto& point : *cloud) {
             coordinates = in.readLine().split(QChar(' '));
+           // if(coordinates.size)
             point.x = coordinates[0].toFloat();
             point.y = coordinates[1].toFloat();
             point.z = coordinates[2].toFloat();
@@ -121,6 +132,7 @@ void PCLViewer::createPointCloud(QFile* file) {
             point.b = blue;
         }
     }
+    file->close();
     // I guess this is a bad practice, but I don't know how to do it better
     viewer->removeAllPointClouds();
     viewer->addPointCloud(cloud, "Point cloud");
