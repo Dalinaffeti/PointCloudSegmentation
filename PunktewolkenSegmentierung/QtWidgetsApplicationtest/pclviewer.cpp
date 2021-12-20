@@ -71,9 +71,10 @@ void PCLViewer::createPointCloud(QFile* file) {
             point.x = coordinates[0].toFloat();
             point.y = coordinates[1].toFloat();
             point.z = coordinates[2].toFloat();
-            point.r = red;
-            point.g = green;
-            point.b = blue;
+            point.r = coordinates[3].toInt();
+            point.g = coordinates[4].toInt();
+            point.b = coordinates[5].toInt();
+            
         }
 
     }

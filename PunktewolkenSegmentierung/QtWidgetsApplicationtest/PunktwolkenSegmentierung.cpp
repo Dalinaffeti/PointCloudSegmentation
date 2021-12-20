@@ -400,8 +400,28 @@ void PunktwolkenSegmentierung::segmentierung(){
     }
     QFile::copy(fileName, "./examples/Quadrat.ply");
     statusBar->showMessage("Segmentierung gestartet..");
+    
+    // Skript start/Aufruf des Skripts
     system(".\\venv\\Scripts\\activate && py PointNet-Segmentierungsnetzwerk.py ");
- 
+
+    // evtl. warten wenn Skript fertig ist und dann kommende Code
+    // Automatisches Importieren der neuen .asc file - aus /SegmentLog/coloredPC.asc
+    // Anschließend die SegmentResultslog.txt in der Segmentresult textbox anzeigen lassen
+
+    /*QString coloredPCpath = "SegmentLog/coloredPC.asc";
+    QFile* endResult = new QFile(coloredPCpath);
+    
+    pclviewer->createPointCloud(endResult);*/
+
+    // Anzeigen der Segment Resultate:
+    
+    QFile segmentResultfile("./SegmentLog/segmentResultslog.txt");
+    segmentResultfile.open(QIODevice::ReadOnly);
+    QTextStream stream(&segmentResultfile);
+    QString content = stream.readAll();
+    segmentResultfile.close();
+    segmentResults->setText(content);
+
     statusBar->showMessage("Segmentierung beendet.");
     
 

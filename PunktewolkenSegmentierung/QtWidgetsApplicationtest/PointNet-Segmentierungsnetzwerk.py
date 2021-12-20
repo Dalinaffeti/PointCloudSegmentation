@@ -216,8 +216,8 @@ input_T = Reshape((3, 3))(x)
 
 
 # forward net
-print('input_T', type(input_T), input_T)
-print('input_points', type(input_points), input_points)
+#print('input_T', type(input_T), input_T)
+#print('input_points', type(input_points), input_points)
 # g = tf.keras.layers.Lambda(mat_mul, arguments={'B': input_T})(input_points)
 # g = tf.keras.layers.Lambda(tf.matmul, arguments={'b': input_T})(input_points)
 g = Dot(axes=(2))([input_points, input_T])
@@ -260,8 +260,8 @@ feature_T = Reshape((64, 64))(f)
 
 
 # forward net
-print(type(g), g)
-print(type(feature_T), feature_T)
+#print(type(g), g)
+#print(type(feature_T), feature_T)
 # g = Lambda(mat_mul, arguments={'B': feature_T})(g)
 g = Dot(axes=(2))([g, feature_T])
 seg_part1 = g
@@ -325,7 +325,7 @@ prediction = Convolution1D(k, 1, activation='softmax')(c)
 
 # define model
 model = Model(inputs=input_points, outputs=prediction)
-print(model.summary())
+#print(model.summary())
 
 
 # In[18]:
@@ -436,16 +436,16 @@ from open3d import *
 input_file = "./examples/Quadrat.ply"
 pcd = open3d.io.read_point_cloud(input_file) # Read the point cloud
 pcd = pcd.voxel_down_sample(voxel_size=10.0)
-print(pcd.points)
+#print(pcd.points)
 
 # Convert open3d format to numpy array
 # Here, you have the point cloud in numpy format. 
 point_cloud_in_numpy = np.asarray(pcd.points)
-print(point_cloud_in_numpy.shape)
+#print(point_cloud_in_numpy.shape)
 ch_arr = np.random.choice(len(point_cloud_in_numpy), num_points, replace=False)
-print(ch_arr.shape)
+#print(ch_arr.shape)
 point_cloud_in_numpy = point_cloud_in_numpy[ch_arr, :]
-print(point_cloud_in_numpy.shape)
+#print(point_cloud_in_numpy.shape)
 
 numpyfile = open("./SegmentLog/npdata.txt", "w")
 for nmpy in range(len(ch_arr)):
@@ -464,14 +464,15 @@ ax = fig.add_subplot(111, projection='3d')
 color = ['r', 'g', 'c', 'y', 'm']
 m= ['o', 'v', '<', '>', 's']
 
+
 # select test data to visualize
 for d_num in range(1):
     v_points = test_points_r[d_num:d_num+1,:,:]
     v_points = point_cloud_in_numpy[None, :, :]
-    print('v_points.shape: ', v_points[0].shape)
-    pcd = open3d.geometry.PointCloud()
-    pcd.points = open3d.utility.Vector3dVector(v_points[0])
-    open3d.io.write_point_cloud("./SegmentLog/data.ply", pcd)
+    #print('v_points.shape: ', v_points[0].shape)
+    # pcd = open3d.geometry.PointCloud()
+    # pcd.points = open3d.utility.Vector3dVector(v_points[0])
+    # open3d.io.write_point_cloud("./SegmentLog/data.ply", pcd)
 
 
     pred = model.predict(v_points)
@@ -479,45 +480,50 @@ for d_num in range(1):
     v_points = np.squeeze(v_points)
     pred = pred.tolist()
 
-   # print(v_points)
-   # print(len(pred))
-    
-   # all v_points in a txt file => vpointsfile.txt
-    vpfile = open("./SegmentLog/vpointsfile.txt", "w")
+   # all v_points in a txt file => vpointslog.txt
+    vpfile = open("./SegmentLog/vpointslog.txt", "w")
     for test in range(len(v_points)):
       vpfile.write(str(v_points[test]) + "\n")
 
-  # all pred data in a txt file => preddata.txt
-    textfile = open("./SegmentLog/preddata.txt", "w")
+  # all pred data in a txt file => preddatalog.txt
+    textfile = open("./SegmentLog/preddatalog.txt", "w")
     for pre in range(len(pred)):
        textfile.write(str(pred[pre]) + "\n")
       
-  
-  #   for pre in range(len(pred)):
-  #       print(pred[pre])
-
     # add data to plot
-    colorfile = open("./SegmentLog/colortest.txt", "w")
-    vpsqfile = open("./SegmentLog/vpsq.txt" , "w")
+
+     #create .asc file
+    coloredPCFile = open("./SegmentLog/coloredPC.asc", "w")
+    coloredPCFile.write("# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH 2048\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS 2048\nDATA ascii\n")
+    #colorfile = open("./SegmentLog/colortest.txt", "w")
+    
+    #counter für segmentierungresultate
+    segmentResultsFile = open("./SegmentLog/segmentResultslog.txt", "w")
+    redc = 0
+    greenc = 0
+
     for i in range(v_points.shape[0]):
         xs = v_points[i,0]
         ys = v_points[i,1]
         zs = v_points[i,2]
         ind = pred[i].index(max(pred[i]))   
         ax.scatter(xs, zs, ys, c=color[ind], marker=m[ind])
-       # print(str(pred[i].index(max(pred[i]))) + "ind \n")
-       # print(str(pred[i]) + " pred i \n")
-        colorfile.write(str(color[ind]) + "\n")
-  
-  # Segment Results in a txt file => segmentresults.txt
-    segmentres = open("./SegmentLog/segmentresults.txt", "w")
-    for k in range(v_points.shape[0]):
-        xs = v_points[k,0]
-        ys = v_points[k,1]
-        zs = v_points[k,2]
-        ind = pred[i].index(max(pred[i])) 
-        segmentres.write(str(xs) + " " + str(ys) + " " + str(zs) + " " +  str(color[ind]) + " " + str(m[ind]) + "\n")  
+       # colorfile.write(str(color[ind]) + "\n")
+        if color[ind] == 'r':
+            rgb = "255 0 0" 
+            redc += 1
+        elif color[ind] == 'g':
+            rgb = "0 255 0"
+            greenc += 1
+        coloredPCFile.write(str(v_points[i,0].round(4)) + " " + str(v_points[i,1].round(4))+ " " + str(v_points[i,2].round(4)) + " " + rgb + "\n")
 
+  #Minimum maximum etc. noch nicht möglich - späteren Verlauf str(0) durch Berechnungen ersetzen
+    segmentResultsFile.write("Kategorie: Seite\nMaximum: "+ str(greenc) + 
+    "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0) + "\n\n\n" 
+    )
+    segmentResultsFile.write("Kategorie: Ecke\nMaximum: "+ str(redc) + 
+    "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0))
+ 
     # set axis labels and limits
     ax.set_xlim3d(-3100,3100)
     ax.set_ylim3d(-3100,3100)
@@ -527,10 +533,7 @@ for d_num in range(1):
     ax.set_ylabel('Z')
     ax.set_zlabel('Y')   
 
-    #plt.show()
-    plt.savefig('./SegmentLog/latestSegmentPicture'+ '.pdf')
-    #plt.cla()
-    #print('d_num:', d_num)
+  
 
 # Quellen: 
 # 
