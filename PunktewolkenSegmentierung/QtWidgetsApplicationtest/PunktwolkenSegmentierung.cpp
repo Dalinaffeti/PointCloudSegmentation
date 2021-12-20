@@ -20,6 +20,7 @@
 #include <pcl/io/ply_io.h>
 #include <iostream>
 #include <pcl/io/ascii_io.h>
+#include <pcl/io/pcd_io.h>
 #include <filesystem>
 #include <pcl/io/file_io.h>
 using namespace pcl::io;
@@ -386,21 +387,22 @@ void PunktwolkenSegmentierung::segmentierung(){
         const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         const std::string src = fileName.toStdString();
         
-        pcl::ASCIIReader Reader;
+        pcl::PCDReader Reader;
         Reader.read(src, *cloud);
         std::string pfile = "./examples/Quadrat.ply";
        
-        savePLYFileASCII(pfile, *cloud);    
+        savePLYFileASCII(pfile, *cloud);
+        statusBar->showMessage("ASCII zu PLY Export fertig");
     }
     if (QFile::exists("./examples/Quadrat.ply"))
     {
         QFile::remove("./examples/Quadrat.ply");
     }
     QFile::copy(fileName, "./examples/Quadrat.ply");
-   
+    statusBar->showMessage("Segmentierung gestartet..");
     system(".\\venv\\Scripts\\activate && py PointNet-Segmentierungsnetzwerk.py ");
  
-
-    statusBar->showMessage("Segmentierung gestartet..");
+    statusBar->showMessage("Segmentierung beendet.");
+    
 
 }
