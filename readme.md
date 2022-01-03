@@ -84,7 +84,7 @@ Damit vcpkg mit Visual Studio funktioniert, führe den folgenden Kommando aus:
 3. Geben Sie anschließend folgendes ein:
 
 ```cmd
->  {path to python.exe} -m venv venv}
+>  {path to python.exe} -m venv venv
 ```
 Es muss der komplette Pfad der Python.exe ohne Klammern angegeben werden!
 
