@@ -164,12 +164,11 @@ s = 'simple_rect_'
 # number of points in each sample
 num_points = 2048
 
-# shapes and categories
-#sList = {'Airplane': 4, 'Chair': 4, 'Guitar': 3, 'Knife': 2, 'Lamp': 3, 'Table': 2}
+
 
 # number of categories
 k = 2
-#k = sList[s]
+
 # define optimizer
 adam = Adam(lr=0.05)
 
@@ -349,6 +348,12 @@ path = os.getcwd()
 train_path = os.path.join(path, "Seg_Prep")
 filename = s + "test.h5"
 
+# load checkpoint
+checkpoint_path = "checkpoints/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+# Create a callback that saves the model's weights
+cp_callback = tf.keras.callbacks.ModelCheckPoints(filepath=checkpoint_path, save_weights_only=true,verbose=1)
+
 train_points = None
 train_labels = None
 cur_points, cur_labels = load_h5(os.path.join(train_path, filename))
@@ -400,7 +405,7 @@ test_labels_r = test_labels.reshape(-1, num_points, k)
 #     # rotate and jitter point cloud every epoch
 #     # train_points_rotate = rotate_point_cloud(train_points_r)
 #     # train_points_jitter = jitter_point_cloud(train_points_r, 10, 20)
-#     model.fit(train_points_r, train_labels_r, batch_size=128, epochs=1, shuffle=True, verbose=1)
+#     model.fit(train_points_r, train_labels_r, batch_size=128, epochs=1, shuffle=True, verbose=1, callbacks=[cp_callback])
 #     e = "Current epoch is:" + str(i)
 #     print(e)
 #     # evaluate model
@@ -409,22 +414,11 @@ test_labels_r = test_labels.reshape(-1, num_points, k)
 #         print('Test loss: ', score[0])
 #         print('Test accuracy: ', score[1])
 
+os.listdir(checkpoint_dir)
 
-# ## Visualisierung
+# load checkpoint/ loads the weights
 
-# Um die Effektivität des Netzwerks visuell nachvollziehen zu können, wird in den nachfolgenden Code-Zellen ein 3D-Plot eines beliebigen Datensatzes erzeugt.
-# 
-# An dieser Stelle ein wichtiger Hinweis: Um verschiedene Objekte zu visualisieren, muss das Netzwerk nicht jedes Mal von Neuem trainiert werden. Es ist ausreichend, lediglich die nachfolgende Codezelle via "Run"-Befehl auszuführen.
-# 
-# Hierfür wird zunächst ein `figure()`-Objekt des Pakets `matplotlib` erzeugt und mit einem 3D-Subplot gefüllt. Die Achsenbegrenzungen und die Größe der Darstellung können nach Belieben angepasst werden. 
-# 
-# Die Arrays `color` und `m` legen die Farbe und Form der einzelnen Segmente in der Darstellung fest und können ebenfalls nach Belieben angepasst werden. Mögliche Werte können in der Dokumentation von `matplotlib` nachgelesen werden.
-# 
-# Über die Variable `d_num` kann auf die einzelnen Objekte des Testdatensatzes zugegriffen werden. Die entsprechenden Punkte werden extrahiert und an das Netzwerk übergeben. Der Output des Netzwerks wird in der Variable `pred` gespeichert und in eine Liste konvertiert.
-# 
-# Die `squeeze`-Funktion eliminiert atomare Dimensionen, um das Durchlaufen des Datensatzes zu vereinfachen.
-# 
-# Nachdem die Daten ausgewählt und in eine passende Form gebracht wurden, werden die einzelnen Punkte über eine for-Schleife als Scatter-Plot visualisiert.
+model.load_weights(checkpoint_path)
 
 # In[22]:
 
@@ -436,16 +430,13 @@ from open3d import *
 input_file = "./examples/Quadrat.ply"
 pcd = open3d.io.read_point_cloud(input_file) # Read the point cloud
 pcd = pcd.voxel_down_sample(voxel_size=10.0)
-#print(pcd.points)
+
 
 # Convert open3d format to numpy array
 # Here, you have the point cloud in numpy format. 
 point_cloud_in_numpy = np.asarray(pcd.points)
-#print(point_cloud_in_numpy.shape)
 ch_arr = np.random.choice(len(point_cloud_in_numpy), num_points, replace=False)
-#print(ch_arr.shape)
 point_cloud_in_numpy = point_cloud_in_numpy[ch_arr, :]
-#print(point_cloud_in_numpy.shape)
 
 numpyfile = open("./SegmentLog/npdata.txt", "w")
 for nmpy in range(len(ch_arr)):
@@ -469,11 +460,6 @@ m= ['o', 'v', '<', '>', 's']
 for d_num in range(1):
     v_points = test_points_r[d_num:d_num+1,:,:]
     v_points = point_cloud_in_numpy[None, :, :]
-    #print('v_points.shape: ', v_points[0].shape)
-    # pcd = open3d.geometry.PointCloud()
-    # pcd.points = open3d.utility.Vector3dVector(v_points[0])
-    # open3d.io.write_point_cloud("./SegmentLog/data.ply", pcd)
-
 
     pred = model.predict(v_points)
     pred = np.squeeze(pred)
@@ -492,12 +478,12 @@ for d_num in range(1):
       
     # add data to plot
 
-     #create .asc file
+   #create .asc file
     coloredPCFile = open("./SegmentLog/coloredPC.asc", "w")
     coloredPCFile.write("# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH 2048\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS 2048\nDATA ascii\n")
-    #colorfile = open("./SegmentLog/colortest.txt", "w")
+
     
-    #counter für segmentierungresultate
+    #counter for segmentresults
     segmentResultsFile = open("./SegmentLog/segmentResultslog.txt", "w")
     redc = 0
     greenc = 0
