@@ -62,11 +62,6 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="pclviewer.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Punktwolke.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -79,5 +74,10 @@
     <ClInclude Include="typ.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="pclviewer.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

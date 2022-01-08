@@ -1,5 +1,5 @@
 #include "PunktwolkenSegmentierung.h"
-#include "pclviewer.h"
+#include "ui_PunktwolkenSegmentierung.h"
 #include <QProgressBar>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -28,15 +28,7 @@ using namespace pcl::io;
 
 using std::string;
 
-//string getFileExt(const string s) {
-//
-//    size_t i = s.rfind('.', s.length());
-//    if (i != string::npos) {
-//        return(s.substr(i + 1, s.length() - i));
-//    }
-//
-//    return("");
-//}
+
 
 PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     : QMainWindow(parent)
@@ -185,7 +177,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     statusBar->setObjectName(QString::fromUtf8("statusBar"));
     statusBar->setMinimumSize(QSize(0, 20));
     setStatusBar(statusBar);
-
+    
     menuBar->addAction(menuFile->menuAction());
     
    
@@ -220,11 +212,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     pclviewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     statusBar->showMessage("Willkommen! Bitte eine .ply oder .asc Datei importieren um zu starten.");
-    QProgressBar* progressBar = new QProgressBar(this);
-    progressBar->setMinimum(0);
-    progressBar->setMaximum(100);
-    progressBar->setValue(0);
-    statusBar->addPermanentWidget(progressBar);
+    
 
     connect(actionNew, SIGNAL(triggered(bool)), this, SLOT(resetAll()));
     connect(actionSave, SIGNAL(triggered(bool)), this, SLOT(exportResults()));
@@ -344,32 +332,24 @@ QString fileName;
 /// Import der Punktwolke
 /// </summary>
 void PunktwolkenSegmentierung::importPCFile() {
+    
+    QProgressBar* progressBar = new QProgressBar(this);
+    progressBar->setMinimum(0);
+    progressBar->setMaximum(0);
+    
+    statusBar->addPermanentWidget(progressBar);
      fileName = QFileDialog::getOpenFileName(this,
         tr("Punktwolke Datei öffnen"), "",
         tr("PC Format (*.ply *.asc)"));
-    //std::string sfileName = fileName.toUtf8().constData();
-
-    //if (getFileExt(sfileName) == "ply") {
-    //    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    //    pcl::visualization::PCLVisualizer::Ptr viewer;
-    //    
-    //    pcl::PLYReader Reader;
-    //    Reader.read(sfileName, *cloud);
-    //    viewer->addPointCloud(cloud, "Point cloud");
-
-    //    //pcl::io::loadPLYFile(sfileName, *cloud);
-    //    statusBar->showMessage("PLY file was loaded");
-   // }
-
+    
     QFile* file = new QFile(fileName);
-   /* if (!file->open(QIODevice::ReadOnly )) {
-        QMessageBox::critical(nullptr, "Error", "Datei konnte nicht geffnet werden, keine Rechte!");
-        statusBar->showMessage("Bitte nochmal versuchen. Ein Fehler ist aufgetreten.");
-
-        return;
-    }*/
+    
     pclviewer->createPointCloud(file);
     statusBar->showMessage("Datei wird geladen");
+    progressBar->setMaximum(100);
+
+    progressBar->setValue(100);
+    statusBar->removeWidget(progressBar);
 }
 
 /// <summary>
@@ -381,8 +361,15 @@ void PunktwolkenSegmentierung::openDocs() {
 }
 
 void PunktwolkenSegmentierung::segmentierung(){
+    QProgressBar* progressBar = new QProgressBar(this);
+    progressBar->setMinimum(0);
+    progressBar->setMaximum(0);
     QFileInfo* info = new QFileInfo(fileName);
     if (info->completeSuffix() == QString("asc")) {
+        
+        
+
+        statusBar->addPermanentWidget(progressBar);
         statusBar->showMessage("ASCII zu PLY Export gestartet..");
         const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         const std::string src = fileName.toStdString();
@@ -393,14 +380,21 @@ void PunktwolkenSegmentierung::segmentierung(){
        
         savePLYFileASCII(pfile, *cloud);
         statusBar->showMessage("ASCII zu PLY Export fertig");
+        progressBar->setMaximum(100);
+        progressBar->setValue(100);
     }
+    progressBar->setMaximum(0);
+
     if (QFile::exists("./examples/Quadrat.ply"))
     {
         QFile::remove("./examples/Quadrat.ply");
     }
+    progressBar->setMaximum(0);
+
     QFile::copy(fileName, "./examples/Quadrat.ply");
     statusBar->showMessage("Segmentierung gestartet..");
-    
+    progressBar->setMaximum(0);
+
     // Skript start/Aufruf des Skripts
     system(".\\venv\\Scripts\\activate && py PointNet-Segmentierungsnetzwerk.py ");
 
@@ -424,7 +418,7 @@ void PunktwolkenSegmentierung::segmentierung(){
 
     pclviewer->createPointCloud(endResult);
 
-
+    progressBar->setValue(100);
     statusBar->showMessage("Segmentierung beendet.");
     
 

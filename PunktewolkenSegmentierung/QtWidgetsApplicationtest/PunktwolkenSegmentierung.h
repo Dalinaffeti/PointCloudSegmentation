@@ -17,12 +17,15 @@
 
 #include "pclviewer.h"
 
+
 class PunktwolkenSegmentierung : public QMainWindow
 {
     Q_OBJECT
 
 public:
     PunktwolkenSegmentierung(QWidget* parent = Q_NULLPTR);
+
+
     PCLViewer* pclviewer;
     QAction* actionNew;
     QAction* actionOpen;
