@@ -348,11 +348,11 @@ path = os.getcwd()
 train_path = os.path.join(path, "Seg_Prep")
 filename = s + "test.h5"
 
-# load checkpoint
-checkpoint_path = "checkpoints/cp.ckpt"
-checkpoint_dir = os.path.dirname(checkpoint_path)
-# Create a callback that saves the model's weights
-cp_callback = tf.keras.callbacks.ModelCheckPoints(filepath=checkpoint_path, save_weights_only=true,verbose=1)
+# # load checkpoint
+# checkpoint_path = "checkpoints/cp.ckpt"
+# checkpoint_dir = os.path.dirname(checkpoint_path)
+# # Create a callback that saves the model's weights
+# cp_callback = tf.keras.callbacks.ModelCheckPoints(filepath=checkpoint_path, save_weights_only=true,verbose=1)
 
 train_points = None
 train_labels = None
@@ -414,11 +414,11 @@ test_labels_r = test_labels.reshape(-1, num_points, k)
 #         print('Test loss: ', score[0])
 #         print('Test accuracy: ', score[1])
 
-os.listdir(checkpoint_dir)
+#os.listdir(checkpoint_dir)
 
 # load checkpoint/ loads the weights
 
-model.load_weights(checkpoint_path)
+#model.load_weights(checkpoint_path)
 
 # In[22]:
 
