@@ -1,5 +1,5 @@
-#include "PunktwolkenSegmentierung.h"
-#include "ui_PunktwolkenSegmentierung.h"
+ï»¿#include "PunktwolkenSegmentierung.h"
+#include "pclviewer.h"
 #include <QProgressBar>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -12,7 +12,6 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QVBoxLayout>
@@ -36,18 +35,23 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
 #pragma region UiCode
 
 
-    resize(800, 650);
+    resize(1000, 650);
     setMinimumSize(QSize(800, 650));
-    
+
     setBaseSize(QSize(800, 650));
     actionNew = new QAction(this);
     actionNew->setObjectName(QString::fromUtf8("actionNew"));
     actionOpen = new QAction(this);
     actionOpen->setObjectName(QString::fromUtf8("actionOpen"));
+
     actionSave = new QAction(this);
     actionSave->setObjectName(QString::fromUtf8("actionSave"));
+    actionSave->setDisabled(true);
+
     actionSaveAs = new QAction(this);
     actionSaveAs->setObjectName(QString::fromUtf8("actionSaveAs"));
+    actionSaveAs->setDisabled(true);
+
     actionExit = new QAction(this);
     actionExit->setObjectName(QString::fromUtf8("actionExit"));
     actionDocs = new QAction(this);
@@ -76,43 +80,35 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     actionDelete->setObjectName(QString::fromUtf8("actionDelete"));
     centralWidget = new QWidget(this);
     centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-    horizontalLayoutWidget = new QWidget(centralWidget);
-    horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
-    horizontalLayoutWidget->setGeometry(QRect(0, 0, 908, 502));
-    horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
+    setCentralWidget(centralWidget);
+
+    horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(6);
     horizontalLayout->setContentsMargins(11, 11, 11, 11);
     horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
     horizontalLayout->setContentsMargins(0, 0, 0, 0);
-    horizontalSpacer = new QSpacerItem(5, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
-
-    horizontalLayout->addItem(horizontalSpacer);
+    centralWidget->setLayout(horizontalLayout);
 
     verticalLayout = new QVBoxLayout();
     verticalLayout->setSpacing(6);
     verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-    verticalSpacer_4 = new QSpacerItem(10, 5, QSizePolicy::Minimum, QSizePolicy::Fixed);
+    horizontalLayout->addLayout(verticalLayout);
 
-    verticalLayout->addItem(verticalSpacer_4);
-
-    filename = new QTextBrowser(horizontalLayoutWidget);
+    filename = new QTextBrowser();
     filename->setObjectName(QString::fromUtf8("filename"));
+
     QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(filename->sizePolicy().hasHeightForWidth());
-    filename->setSizePolicy(sizePolicy);
-    filename->setMinimumSize(QSize(180, 30));
-    filename->setMaximumSize(QSize(180, 30));
+
+    
+    filename->setMaximumSize(QSize(300, 100));
     filename->setBaseSize(QSize(180, 30));
 
     verticalLayout->addWidget(filename);
 
-    verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-    verticalLayout->addItem(verticalSpacer_3);
-
-    importBtn = new QPushButton(horizontalLayoutWidget);
+    importBtn = new QPushButton();
     importBtn->setObjectName(QString::fromUtf8("importBtn"));
     sizePolicy.setHeightForWidth(importBtn->sizePolicy().hasHeightForWidth());
     importBtn->setSizePolicy(sizePolicy);
@@ -123,11 +119,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
 
     verticalLayout->addWidget(importBtn, 0, Qt::AlignHCenter);
 
-    verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-    verticalLayout->addItem(verticalSpacer);
-
-    segBtn = new QPushButton(horizontalLayoutWidget);
+    segBtn = new QPushButton();
     segBtn->setObjectName(QString::fromUtf8("segBtn"));
     sizePolicy.setHeightForWidth(segBtn->sizePolicy().hasHeightForWidth());
     segBtn->setSizePolicy(sizePolicy);
@@ -137,30 +129,30 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
 
     verticalLayout->addWidget(segBtn, 0, Qt::AlignHCenter);
 
-    verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    saveBtn = new QPushButton();
+    saveBtn->setText("Speichern");
+    saveBtn->setSizePolicy(sizePolicy);
+    saveBtn->setBaseSize(QSize(180, 40));
+    saveBtn->setMinimumSize(QSize(180, 40));
+    saveBtn->setDisabled(true);
+    verticalLayout->addWidget(saveBtn, 0, Qt::AlignHCenter);
 
-    verticalLayout->addItem(verticalSpacer_2);
+    pclviewer = new PCLViewer();
+    pclviewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    pclviewer->setMinimumSize(QSize(500, 500));
+    pclviewer->setMaximumSize(QSize(1000, 1000));
+    horizontalLayout->addWidget(pclviewer);
 
-    horizontalLayout->addLayout(verticalLayout);
-
-    widget = new QWidget(centralWidget);
-    widget->setObjectName(QString::fromUtf8("widget"));
-    widget->setGeometry(QRect(0, 500, 802, 121));
-    horizontalLayout_2 = new QHBoxLayout(widget);
-    horizontalLayout_2->setSpacing(6);
-    horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
-    horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-    horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-    segmentResults = new QTextBrowser(widget);
+    segmentResults = new QTextBrowser();
     segmentResults->setObjectName(QString::fromUtf8("segmentResults"));
     sizePolicy.setHeightForWidth(segmentResults->sizePolicy().hasHeightForWidth());
-    segmentResults->setSizePolicy(sizePolicy);
-    segmentResults->setMinimumSize(QSize(800, 110));
-    segmentResults->setMaximumSize(QSize(650, 100));
+    QSizePolicy sizePolicy2(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    segmentResults->setSizePolicy(sizePolicy2);
+    segmentResults->setMinimumSize(QSize(300, 300));
+    segmentResults->setMaximumSize(QSize(600, 600));
 
-    horizontalLayout_2->addWidget(segmentResults);
+    horizontalLayout->addWidget(segmentResults);
 
-    setCentralWidget(centralWidget);
     menuBar = new QMenuBar(this);
     menuBar->setObjectName(QString::fromUtf8("menuBar"));
     menuBar->setGeometry(QRect(0, 0, 800, 21));
@@ -177,12 +169,11 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     statusBar->setObjectName(QString::fromUtf8("statusBar"));
     statusBar->setMinimumSize(QSize(0, 20));
     setStatusBar(statusBar);
-    
+
     menuBar->addAction(menuFile->menuAction());
-    
-   
+
     menuBar->addAction(menuHilfe->menuAction());
-    
+
     menuFile->addAction(actionOpen);
     menuFile->addSeparator();
     menuFile->addAction(actionSaveAs);
@@ -196,23 +187,10 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     QObject::connect(actionExit, &QAction::triggered, this, qOverload<>(&QMainWindow::close));
     QObject::connect(actionSave, &QAction::triggered, this, qOverload<>(&QMainWindow::update));
 
-   
-
-   
-   
-   
-    
-   
-
-   
 #pragma endregion
 
-    pclviewer = new PCLViewer();
-    horizontalLayout->addWidget(pclviewer);
-    pclviewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     statusBar->showMessage("Willkommen! Bitte eine .ply oder .asc Datei importieren um zu starten.");
-    
+
 
     connect(actionNew, SIGNAL(triggered(bool)), this, SLOT(resetAll()));
     connect(actionSave, SIGNAL(triggered(bool)), this, SLOT(exportResults()));
@@ -221,6 +199,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     connect(actionDocs, SIGNAL(triggered(bool)), this, SLOT(openDocs()));
 
     connect(importBtn, SIGNAL(clicked()), this, SLOT(importPCFile()));
+    connect(saveBtn, SIGNAL(clicked()), this, SLOT(exportResults()));
     connect(segBtn, SIGNAL(clicked()), this, SLOT(segmentierung()));
 
     resetAll();
@@ -290,7 +269,7 @@ void PunktwolkenSegmentierung::retranslateUi()
 
 
 /// <summary>
-/// Setzt beim Start alles zurück + falls eine neue Datei ausgewählt wird, soll alles resettet werden.
+/// Setzt beim Start alles zurÃ¼ck + falls eine neue Datei ausgewÃ¤hlt wird, soll alles resettet werden.
 /// </summary>
 void PunktwolkenSegmentierung::resetAll() {
     // Resultate reset, Viewer schwarz, fps reset, dateiname reset
@@ -302,8 +281,9 @@ void PunktwolkenSegmentierung::resetAll() {
     actionRotate->setEnabled(false);
     actionSwitchView->setEnabled(false);
     statusBar->showMessage("");
-
-   
+    actionSave->setEnabled(false);
+    actionSaveAs->setEnabled(false);
+    saveBtn->setDisabled(true);
 }
 
 /// <summary>
@@ -332,18 +312,20 @@ QString fileName;
 /// Import der Punktwolke
 /// </summary>
 void PunktwolkenSegmentierung::importPCFile() {
-    
+
     QProgressBar* progressBar = new QProgressBar(this);
     progressBar->setMinimum(0);
     progressBar->setMaximum(0);
-    
+
     statusBar->addPermanentWidget(progressBar);
-     fileName = QFileDialog::getOpenFileName(this,
-        tr("Punktwolke Datei öffnen"), "",
+    fileName = QFileDialog::getOpenFileName(this,
+        tr("Punktwolke Datei Ã¶ffnen"), "",
         tr("PC Format (*.ply *.asc)"));
     
+    filename->setText(fileName);
+
     QFile* file = new QFile(fileName);
-    
+  
     pclviewer->createPointCloud(file);
     statusBar->showMessage("Datei wird geladen");
     progressBar->setMaximum(100);
@@ -353,31 +335,28 @@ void PunktwolkenSegmentierung::importPCFile() {
 }
 
 /// <summary>
-/// Öffnet die Readme URL aus gitlab - 
+/// Ã–ffnet die Readme URL aus gitlab - 
 /// </summary>
 void PunktwolkenSegmentierung::openDocs() {
 
     QDesktopServices::openUrl(QUrl("https://gitlab.rz.htw-berlin.de/softwareentwicklungsprojekt/wise2021-22/team8/-/blob/master/readme.md", QUrl::TolerantMode));
 }
 
-void PunktwolkenSegmentierung::segmentierung(){
+void PunktwolkenSegmentierung::segmentierung() {
     QProgressBar* progressBar = new QProgressBar(this);
     progressBar->setMinimum(0);
     progressBar->setMaximum(0);
     QFileInfo* info = new QFileInfo(fileName);
     if (info->completeSuffix() == QString("asc")) {
-        
-        
-
         statusBar->addPermanentWidget(progressBar);
         statusBar->showMessage("ASCII zu PLY Export gestartet..");
         const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         const std::string src = fileName.toStdString();
-        
+
         pcl::PCDReader Reader;
         Reader.read(src, *cloud);
         std::string pfile = "./examples/Quadrat.ply";
-       
+
         savePLYFileASCII(pfile, *cloud);
         statusBar->showMessage("ASCII zu PLY Export fertig");
         progressBar->setMaximum(100);
@@ -400,11 +379,11 @@ void PunktwolkenSegmentierung::segmentierung(){
 
     // evtl. warten wenn Skript fertig ist und dann kommende Code
     // Automatisches Importieren der neuen .asc file - aus /SegmentLog/coloredPC.asc
-    // Anschließend die SegmentResultslog.txt in der Segmentresult textbox anzeigen lassen
+    // AnschlieÃŸend die SegmentResultslog.txt in der Segmentresult textbox anzeigen lassen
 
-   
+
     // Anzeigen der Segment Resultate:
-    
+
     QFile segmentResultfile("./SegmentLog/segmentResultslog.txt");
     segmentResultfile.open(QIODevice::ReadOnly);
     QTextStream stream(&segmentResultfile);
@@ -413,13 +392,15 @@ void PunktwolkenSegmentierung::segmentierung(){
     segmentResults->setText(content);
 
     QString coloredPCpath = "./SegmentLog/coloredPC.asc";
-    
+
     QFile* endResult = new QFile(coloredPCpath);
 
     pclviewer->createPointCloud(endResult);
 
     progressBar->setValue(100);
     statusBar->showMessage("Segmentierung beendet.");
-    
 
+    actionSave->setEnabled(true);
+    actionSaveAs->setEnabled(true);
+    saveBtn->setEnabled(true);
 }
