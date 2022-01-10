@@ -293,6 +293,11 @@ void PunktwolkenSegmentierung::retranslateUi()
 /// Setzt beim Start alles zurück + falls eine neue Datei ausgewählt wird, soll alles resettet werden.
 /// </summary>
 void PunktwolkenSegmentierung::resetAll() {
+    QProgressBar* progressBar = new QProgressBar(this);
+    progressBar->setMinimum(0);
+    progressBar->setMaximum(0);
+
+    statusBar->addPermanentWidget(progressBar);
     // Resultate reset, Viewer schwarz, fps reset, dateiname reset
     QString empty = segmentResults->toPlainText();
     filename->setText("");
@@ -301,7 +306,8 @@ void PunktwolkenSegmentierung::resetAll() {
     actionZoomOut->setEnabled(false);
     actionRotate->setEnabled(false);
     actionSwitchView->setEnabled(false);
-    statusBar->showMessage("");
+    statusBar->showMessage("Alles ist zurückgesetzt.");
+    progressBar->setMaximum(100);
 
    
 }
@@ -310,6 +316,11 @@ void PunktwolkenSegmentierung::resetAll() {
 /// Exportieren der Punktwolke
 /// </summary>
 void PunktwolkenSegmentierung::exportResults() {
+    QProgressBar* progressBar = new QProgressBar(this);
+    progressBar->setMinimum(0);
+    progressBar->setMaximum(0);
+
+    statusBar->addPermanentWidget(progressBar);
     QString file = QFileDialog::getSaveFileName(this,
         tr("SegmentResults speichern "), "", tr("SegmentResults (*.txt);;All Files (*)"));
     if (!file.isEmpty())
@@ -325,6 +336,9 @@ void PunktwolkenSegmentierung::exportResults() {
         }
 
     }
+    statusBar->showMessage("Die Ergebnisse sind exportiert");
+    progressBar->setMaximum(100);
+
 }
 QString fileName;
 
@@ -349,7 +363,6 @@ void PunktwolkenSegmentierung::importPCFile() {
     progressBar->setMaximum(100);
 
     progressBar->setValue(100);
-    statusBar->removeWidget(progressBar);
 }
 
 /// <summary>
@@ -361,6 +374,7 @@ void PunktwolkenSegmentierung::openDocs() {
 }
 
 void PunktwolkenSegmentierung::segmentierung(){
+
     QProgressBar* progressBar = new QProgressBar(this);
     progressBar->setMinimum(0);
     progressBar->setMaximum(0);
