@@ -289,9 +289,12 @@ void PunktwolkenSegmentierung::resetAll() {
     actionSave->setEnabled(false);
     actionSaveAs->setEnabled(false);
     saveBtn->setDisabled(true);
-    statusBar->showMessage("Alles ist zurückgesetzt.");
+    statusBar->showMessage("Alles ist zurueckgesetzt.");
     progressBar->setMaximum(100);
-
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1000);
+    statusBar->removeWidget(progressBar);
    
 }
 
@@ -305,22 +308,23 @@ void PunktwolkenSegmentierung::exportResults() {
 
     statusBar->addPermanentWidget(progressBar);
     QString file = QFileDialog::getSaveFileName(this,
-        tr("SegmentResults speichern "), "", tr("SegmentResults (*.txt);;All Files (*)"));
+        tr("SegmentResults speichern "), "", tr("PC Format (*.ply *.asc)"));
     if (!file.isEmpty())
     {
         QString mFilename = file;
         QFile sFile(mFilename);
-        if (sFile.open(QFile::WriteOnly | QFile::Text))
-        {
-            QTextStream out(&sFile);
-            out << segmentResults->toPlainText();
-            sFile.flush();
-            sFile.close();
-        }
+        QFileInfo* info = new QFileInfo(mFilename);
+        QString ErgebnisFile = info->baseName() + ".asc";
+        QFile::copy("./SegmentLog/coloredPC.asc", QDir(info->absolutePath()).filePath(info->baseName()));
+        
 
     }
     statusBar->showMessage("Die Ergebnisse sind exportiert");
     progressBar->setMaximum(100);
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1000);
+    statusBar->removeWidget(progressBar);
 
 }
 QString fileName;
@@ -348,6 +352,11 @@ void PunktwolkenSegmentierung::importPCFile() {
     progressBar->setMaximum(100);
 
     progressBar->setValue(100);
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->setInterval(1000);
+    timer->start();
+    statusBar->removeWidget(progressBar);
 }
 
 /// <summary>
@@ -359,12 +368,10 @@ void PunktwolkenSegmentierung::openDocs() {
 }
 
 void PunktwolkenSegmentierung::segmentierung(){
-    QProgressBar* progressBar = new QProgressBar(this);
-    progressBar->setMinimum(0);
-    progressBar->setMaximum(0);
+    
     QFileInfo* info = new QFileInfo(fileName);
     if (info->completeSuffix() == QString("asc")) {
-        statusBar->addPermanentWidget(progressBar);
+        ;
         statusBar->showMessage("ASCII zu PLY Export gestartet..");
         const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         const std::string src = fileName.toStdString();
@@ -375,21 +382,20 @@ void PunktwolkenSegmentierung::segmentierung(){
 
         savePLYFileASCII(pfile, *cloud);
         statusBar->showMessage("ASCII zu PLY Export fertig");
-        progressBar->setMaximum(100);
-        progressBar->setValue(100);
     }
-    progressBar->setMaximum(0);
+   
 
     if (QFile::exists("./examples/Quadrat.ply"))
     {
         QFile::remove("./examples/Quadrat.ply");
     }
-    progressBar->setMaximum(0);
 
     QFile::copy(fileName, "./examples/Quadrat.ply");
     statusBar->showMessage("Segmentierung gestartet..");
+    QProgressBar* progressBar = new QProgressBar(this);
+    progressBar->setMinimum(0);
     progressBar->setMaximum(0);
-
+    statusBar->addPermanentWidget(progressBar);
     // Skript start/Aufruf des Skripts
     system(".\\venv\\Scripts\\activate && py PointNet-Segmentierungsnetzwerk.py ");
 
@@ -419,4 +425,8 @@ void PunktwolkenSegmentierung::segmentierung(){
     actionSave->setEnabled(true);
     actionSaveAs->setEnabled(true);
     saveBtn->setEnabled(true);
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1000);
+    statusBar->removeWidget(progressBar);
 }
