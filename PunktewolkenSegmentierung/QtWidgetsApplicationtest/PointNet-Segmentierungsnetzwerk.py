@@ -44,6 +44,8 @@ warnings.simplefilter(action='ignore')
 #get_ipython().run_line_magic('matplotlib', 'notebook')
 
 import numpy as np
+from scipy import ndimage
+import open3d as o3d
 import os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -55,6 +57,7 @@ if gpus:
       tf.config.experimental.set_memory_growth(gpu, True)
   except RuntimeError as e:
     print(e)
+from tensorflow import keras
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
@@ -153,7 +156,7 @@ def jitter_point_cloud(batch_data, sigma=0.01, clip=0.05):
 
 
 # chosen shape
-s = 'simple_rect_'
+s = 'training_data.h5'
 
 
 # Die folgenden globalen Variablen bestimmen wichtige Randbedingungen der verwendeten Datensätze sowie den verwendenten Optimierungsalgorithmus und sollten daher nicht verändert werden.
@@ -342,17 +345,17 @@ model.compile(optimizer='adam',
 
 # In[19]:
 
+# # load checkpoint
+checkpoint_path = "checkpoints/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+#Create a callback that saves the model's weights
+#cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, save_weights_only="true",verbose=1)
 
 # load TRAIN points and labels
 path = os.getcwd()
 train_path = os.path.join(path, "Seg_Prep")
-filename = s + "test.h5"
+filename = s
 
-# # load checkpoint
-# checkpoint_path = "checkpoints/cp.ckpt"
-# checkpoint_dir = os.path.dirname(checkpoint_path)
-# # Create a callback that saves the model's weights
-# cp_callback = tf.keras.callbacks.ModelCheckPoints(filepath=checkpoint_path, save_weights_only=true,verbose=1)
 
 train_points = None
 train_labels = None
@@ -370,7 +373,7 @@ train_labels_r = train_labels.reshape(-1, num_points, k)
 
 # load TEST points and labels
 test_path = os.path.join(path, "Seg_Prep_test")
-filename = s + "test.h5"
+filename = s
 
 test_points = None
 test_labels = None
@@ -383,43 +386,13 @@ test_points_r = test_points.reshape(-1, num_points, 3)
 test_labels_r = test_labels.reshape(-1, num_points, k)
 
 
-# ## Trainingsprozess
-
-# Das Training des Segmentierungsnetzwerks erfolgt in derselben Weise wie im vorherigen Notebook. Über eine for-Schleife wird eine beliebige Anzahl Iterationen realisiert, in denen die mittels der Funktionen `train_points_rotate` und `train_points_jitter` minimal unterschiedliche Versionen der Trainingsdaten über `model.fit` an das Netzwerk übergeben werden.
-# 
-# Die `batch-size` legt fest, in welchen Chargen die Daten vom Netzwerk verarbeitet bzw. wieviele Elemente pro Update der Gradienten genutzt werden. Darüber hinaus sind bei der `batch normalization` der Bezeichung entsprechend die Elemente einer Charge betroffen.
-# 
-# Der Parameter `epochs` legt die Anzahl der Iterationen fest. Da dies in der übergeordneten Schleife festgelegt ist, um die Trainingsdaten in jeder Iteration zu verändern, liegt der Wert bei 1.
-# 
-# `shuffle` führt dazu, dass die Trainingsdaten vor jeder Epoche in eine zufällige Reihenfolge gebracht werden.
-# 
-# `verbose` legt die Visualisierung fest. Der Wert 1 steht hierbei für die Darstellung eines Fortschrittbalkens.
-# 
-# Wie im vorherigen Notebook findet in jeder fünften Iteration eine Evaluation des Netzwerks mit den Testdaten statt.
-
-# In[21]:
-
-
-# # train model
-# for i in range(21):
-#     # rotate and jitter point cloud every epoch
-#     # train_points_rotate = rotate_point_cloud(train_points_r)
-#     # train_points_jitter = jitter_point_cloud(train_points_r, 10, 20)
-#     model.fit(train_points_r, train_labels_r, batch_size=128, epochs=1, shuffle=True, verbose=1, callbacks=[cp_callback])
-#     e = "Current epoch is:" + str(i)
-#     print(e)
-#     # evaluate model
-#     if i % 1 == 0:
-#         score = model.evaluate(test_points_r, test_labels_r, verbose=1)
-#         print('Test loss: ', score[0])
-#         print('Test accuracy: ', score[1])
-
-#os.listdir(checkpoint_dir)
+os.listdir(checkpoint_dir)
 
 # load checkpoint/ loads the weights
-
-#model.load_weights(checkpoint_path)
-
+#model = tf.keras.models.load_model("checkpoints")
+model.load_weights(checkpoint_path)
+loss, acc = model.evaluate(test_points_r, test_labels_r, verbose=1)
+#print("Restored model, accuracy: {:5.2f}%".format(100 * acc))
 # In[22]:
 
 
@@ -427,7 +400,7 @@ from open3d import *
 
 
 # Read .ply file
-input_file = "./examples/Quadrat.ply"
+input_file = "./examples/Quadrat2.ply"
 pcd = open3d.io.read_point_cloud(input_file) # Read the point cloud
 pcd = pcd.voxel_down_sample(voxel_size=10.0)
 
@@ -454,47 +427,44 @@ ax = fig.add_subplot(111, projection='3d')
 # set marker style and color
 color = ['r', 'g', 'c', 'y', 'm']
 m= ['o', 'v', '<', '>', 's']
-
+print("test")
 
 # select test data to visualize
 for d_num in range(1):
-    v_points = test_points_r[d_num:d_num+1,:,:]
+    v_points = test_points_r[d_num:d_num+1,:,:]  
     v_points = point_cloud_in_numpy[None, :, :]
-
+    
     pred = model.predict(v_points)
     pred = np.squeeze(pred)
     v_points = np.squeeze(v_points)
     pred = pred.tolist()
-
-   # all v_points in a txt file => vpointslog.txt
+    # all v_points in a txt file => vpointslog.txt
     vpfile = open("./SegmentLog/vpointslog.txt", "w")
     for test in range(len(v_points)):
       vpfile.write(str(v_points[test]) + "\n")
 
-  # all pred data in a txt file => preddatalog.txt
+    # all pred data in a txt file => preddatalog.txt
     textfile = open("./SegmentLog/preddatalog.txt", "w")
     for pre in range(len(pred)):
        textfile.write(str(pred[pre]) + "\n")
       
-    # add data to plot
-
-   #create .asc file
+  #create .asc file
     coloredPCFile = open("./SegmentLog/coloredPC.asc", "w")
-    coloredPCFile.write("# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH 2048\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS 2048\nDATA ascii\n")
-
-    
-    #counter for segmentresults
+    coloredPCFile.write("# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH 2048\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS 2048\nDATA ascii\n")   
+  #counter for segmentresults
     segmentResultsFile = open("./SegmentLog/segmentResultslog.txt", "w")
     redc = 0
     greenc = 0
 
+ # for i n range
+    testfile = open("./SegmentLog/test.txt", "w")
     for i in range(v_points.shape[0]):
         xs = v_points[i,0]
         ys = v_points[i,1]
         zs = v_points[i,2]
         ind = pred[i].index(max(pred[i]))   
+        testfile.write(str(ind))
         ax.scatter(xs, zs, ys, c=color[ind], marker=m[ind])
-       # colorfile.write(str(color[ind]) + "\n")
         if color[ind] == 'r':
             rgb = "255 0 0" 
             redc += 1
@@ -502,11 +472,16 @@ for d_num in range(1):
             rgb = "0 255 0"
             greenc += 1
         coloredPCFile.write(str(v_points[i,0].round(4)) + " " + str(v_points[i,1].round(4))+ " " + str(v_points[i,2].round(4)) + " " + rgb + "\n")
+        
 
   #Minimum maximum etc. noch nicht möglich - späteren Verlauf str(0) durch Berechnungen ersetzen
     segmentResultsFile.write("Kategorie: Seite\nMaximum: "+ str(greenc) + 
     "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0) + "\n\n\n" 
     )
+    # seg_min = ndimage.minimum(v_points[ind])
+    # seg_max = ndimage.maximum(v_points[ind])
+    # print("min_ " + str(seg_min))
+    # print("max_ " + str(seg_max))
     segmentResultsFile.write("Kategorie: Ecke\nMaximum: "+ str(redc) + 
     "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0))
  
