@@ -126,6 +126,7 @@ PunktwolkenSegmentierung::PunktwolkenSegmentierung(QWidget* parent)
     segBtn->setMinimumSize(QSize(180, 40));
     segBtn->setMaximumSize(QSize(180, 40));
     segBtn->setBaseSize(QSize(180, 40));
+    segBtn->setDisabled(true);
 
     verticalLayout->addWidget(segBtn, 0, Qt::AlignHCenter);
 
@@ -280,7 +281,7 @@ void PunktwolkenSegmentierung::resetAll() {
     // Resultate reset, Viewer schwarz, fps reset, dateiname reset
     QString empty = segmentResults->toPlainText();
     filename->setText("");
-    segmentResults->setText("");
+    segmentResults->clear();
     actionZoomIn->setEnabled(false);
     actionZoomOut->setEnabled(false);
     actionRotate->setEnabled(false);
@@ -333,6 +334,10 @@ QString fileName;
 /// Import der Punktwolke
 /// </summary>
 void PunktwolkenSegmentierung::importPCFile() {
+    saveBtn->setDisabled(true);
+    segmentResults->clear();
+    segBtn->setEnabled(true);
+    actionSaveAs->setDisabled(true);
 
     QProgressBar* progressBar = new QProgressBar(this);
     progressBar->setMinimum(0);
