@@ -385,7 +385,6 @@ test_points = cur_points
 test_points_r = test_points.reshape(-1, num_points, 3)
 test_labels_r = test_labels.reshape(-1, num_points, k)
 
-
 os.listdir(checkpoint_dir)
 
 # load checkpoint/ loads the weights
@@ -400,7 +399,7 @@ from open3d import *
 
 
 # Read .ply file
-input_file = "./examples/Quadrat2.ply"
+input_file = "./examples/Quadrat.ply"
 pcd = open3d.io.read_point_cloud(input_file) # Read the point cloud
 pcd = pcd.voxel_down_sample(voxel_size=10.0)
 
@@ -431,19 +430,21 @@ print("test")
 
 # select test data to visualize
 for d_num in range(1):
-    v_points = test_points_r[d_num:d_num+1,:,:]  
+   
+    v_points = test_points_r[d_num:d_num+1,:,:]
+  
     v_points = point_cloud_in_numpy[None, :, :]
     
     pred = model.predict(v_points)
     pred = np.squeeze(pred)
     v_points = np.squeeze(v_points)
     pred = pred.tolist()
-    # all v_points in a txt file => vpointslog.txt
+     # all v_points in a txt file => vpointslog.txt
     vpfile = open("./SegmentLog/vpointslog.txt", "w")
     for test in range(len(v_points)):
       vpfile.write(str(v_points[test]) + "\n")
 
-    # all pred data in a txt file => preddatalog.txt
+  # all pred data in a txt file => preddatalog.txt
     textfile = open("./SegmentLog/preddatalog.txt", "w")
     for pre in range(len(pred)):
        textfile.write(str(pred[pre]) + "\n")
@@ -457,14 +458,19 @@ for d_num in range(1):
     greenc = 0
 
  # for i n range
-    testfile = open("./SegmentLog/test.txt", "w")
+    # testfile = open("./SegmentLog/test.txt", "w")
+    # colorfile = open("./SegmentLog/colortest.txt", "w")
+    # indzero = open("./SegmentLog/windzero.txt", "w")
+    # indfile = open("./SegmentLog/indfile.txt" , "w")
     for i in range(v_points.shape[0]):
         xs = v_points[i,0]
         ys = v_points[i,1]
         zs = v_points[i,2]
         ind = pred[i].index(max(pred[i]))   
-        testfile.write(str(ind))
         ax.scatter(xs, zs, ys, c=color[ind], marker=m[ind])
+        # indfile.write(str(ind) + "\n")
+        # indzero.write(str(v_points[ind] = 0) + "\n")
+        # colorfile.write(str(v_points[ind] = 1) + "\n")
         if color[ind] == 'r':
             rgb = "255 0 0" 
             redc += 1
@@ -473,8 +479,13 @@ for d_num in range(1):
             greenc += 1
         coloredPCFile.write(str(v_points[i,0].round(4)) + " " + str(v_points[i,1].round(4))+ " " + str(v_points[i,2].round(4)) + " " + rgb + "\n")
         
-
-  #Minimum maximum etc. noch nicht möglich - späteren Verlauf str(0) durch Berechnungen ersetzen
+    # ppd = o3d.geometry.PointCloud()
+    # ppd.points = o3d.utility.Vector3dVector(v_points[ind])
+    # print("ppd ")
+    # labels: o3d.utility.IntVector = o3d.geometry.PointCloud.cluster_dbscan(self=(ppd.points), eps=50.0,min_points=100,print_progress="false")
+    # labels = labels + 1
+    #Minimum maximum etc. noch nicht möglich - späteren Verlauf str(0) durch Berechnungen ersetzen
+    # testfile.write(str(v_points[ind == 1]))
     segmentResultsFile.write("Kategorie: Seite\nMaximum: "+ str(greenc) + 
     "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0) + "\n\n\n" 
     )
@@ -484,7 +495,7 @@ for d_num in range(1):
     # print("max_ " + str(seg_max))
     segmentResultsFile.write("Kategorie: Ecke\nMaximum: "+ str(redc) + 
     "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0))
- 
+
     # set axis labels and limits
     ax.set_xlim3d(-3100,3100)
     ax.set_ylim3d(-3100,3100)
