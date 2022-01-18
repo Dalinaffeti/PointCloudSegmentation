@@ -315,7 +315,7 @@ void PunktwolkenSegmentierung::exportResults() {
         QFile sFile(mFilename);
         QFileInfo* info = new QFileInfo(mFilename);
         QString ErgebnisFile = info->baseName() + ".asc";
-        QFile::copy("./SegmentLog/coloredPC.asc", QDir(info->absolutePath()).filePath(info->baseName()));
+        QFile::copy("./SegmentLog/coloredPC.asc", QDir(info->absolutePath()).filePath(ErgebnisFile));
         
 
     }
