@@ -88,26 +88,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="typ.cpp" />
     <QtRcc Include="PunktwolkenSegmentierung.qrc" />
     <QtUic Include="pclviewer.ui" />
     <QtUic Include="PunktwolkenSegmentierung.ui" />
     <QtMoc Include="PunktwolkenSegmentierung.h" />
-    <ClCompile Include="Kategorie.cpp" />
     <ClCompile Include="pclviewer.cpp" />
-    <ClCompile Include="Punkt.cpp" />
-    <ClCompile Include="Punktwolke.cpp" />
     <ClCompile Include="PunktwolkenSegmentierung.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="pclviewer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Kategorie.h" />
-    <ClInclude Include="Punkt.h" />
-    <ClInclude Include="Punktwolke.h" />
-    <ClInclude Include="typ.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
