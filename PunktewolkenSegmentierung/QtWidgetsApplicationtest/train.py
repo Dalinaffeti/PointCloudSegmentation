@@ -261,7 +261,7 @@ for i in range(3):
 
 os.listdir(checkpoint_dir)
 
-# load checkpoint/ loads the weights
+# save checkpoint
 model.save("checkpoints")
 model.load_weights(checkpoint_path)
 loss, acc = model.evaluate(test_points_r, test_labels_r, verbose=1)

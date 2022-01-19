@@ -383,19 +383,19 @@ void PunktwolkenSegmentierung::segmentierung(){
 
         pcl::PCDReader Reader;
         Reader.read(src, *cloud);
-        std::string pfile = "./examples/Quadrat.ply";
+        std::string pfile = "./examples/Punktwolke.ply";
 
         savePLYFileASCII(pfile, *cloud);
         statusBar->showMessage("ASCII zu PLY Export fertig");
     }
    
 
-    if (QFile::exists("./examples/Quadrat.ply"))
+    if (QFile::exists("./examples/Punktwolke.ply"))
     {
-        QFile::remove("./examples/Quadrat.ply");
+        QFile::remove("./examples/Punktwolke.ply");
     }
 
-    QFile::copy(fileName, "./examples/Quadrat.ply");
+    QFile::copy(fileName, "./examples/Punktwolke.ply");
     statusBar->showMessage("Segmentierung gestartet..");
     QProgressBar* progressBar = new QProgressBar(this);
     progressBar->setMinimum(0);
@@ -418,7 +418,7 @@ void PunktwolkenSegmentierung::segmentierung(){
     segmentResultfile.close();
     segmentResults->setText(content);
 
-    QString coloredPCpath = "./SegmentLog/coloredPC.asc";
+    QString coloredPCpath = "./SegmentLog/segmentiertePunktwolke.asc";
 
     QFile* endResult = new QFile(coloredPCpath);
 

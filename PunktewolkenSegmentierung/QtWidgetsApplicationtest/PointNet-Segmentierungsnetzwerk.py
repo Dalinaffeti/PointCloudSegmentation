@@ -72,6 +72,7 @@ from tensorflow.keras.layers import Lambda, concatenate
 #from keras.layers import Lambda, concatenate
 #from keras.utils import np_utils
 import h5py
+import statistics
 
 
 # ## Hilfsfunktionen
@@ -80,9 +81,9 @@ import h5py
 # 
 # Die Funktion `exp_dim` wird im Modell im Rahmen einer Lambda Layer genutzt, um den globalen Feature-Vektor für die nachfolgende Konkatenation zu erweitern.
 
+# Console Call das die Berechnung etwas andauert
+print("\n\n***!!***\n\n\nDie Berechnung für die Segmentierung dauert leider knapp 30s. \nBitte warten..\n\n\n***!!***\n\n")
 # In[3]:
-
-
 def mat_mul(A, B):
     return tf.matmul(A, B)
 
@@ -399,7 +400,7 @@ from open3d import *
 
 
 # Read .ply file
-input_file = "./examples/Quadrat.ply"
+input_file = "./examples/Punktwolke.ply"
 pcd = open3d.io.read_point_cloud(input_file) # Read the point cloud
 pcd = pcd.voxel_down_sample(voxel_size=10.0)
 
@@ -409,10 +410,6 @@ pcd = pcd.voxel_down_sample(voxel_size=10.0)
 point_cloud_in_numpy = np.asarray(pcd.points)
 ch_arr = np.random.choice(len(point_cloud_in_numpy), num_points, replace=False)
 point_cloud_in_numpy = point_cloud_in_numpy[ch_arr, :]
-
-numpyfile = open("./SegmentLog/npdata.txt", "w")
-for nmpy in range(len(ch_arr)):
-  numpyfile.write(str(ch_arr[nmpy]) + "\n")
 
 # In[24]:
 
@@ -426,76 +423,160 @@ ax = fig.add_subplot(111, projection='3d')
 # set marker style and color
 color = ['r', 'g', 'c', 'y', 'm']
 m= ['o', 'v', '<', '>', 's']
-print("test")
 
-# select test data to visualize
+
+# select test data to visualize | segmentation
 for d_num in range(1):
-   
     v_points = test_points_r[d_num:d_num+1,:,:]
-  
     v_points = point_cloud_in_numpy[None, :, :]
-    
     pred = model.predict(v_points)
     pred = np.squeeze(pred)
     v_points = np.squeeze(v_points)
     pred = pred.tolist()
-     # all v_points in a txt file => vpointslog.txt
-    vpfile = open("./SegmentLog/vpointslog.txt", "w")
-    for test in range(len(v_points)):
-      vpfile.write(str(v_points[test]) + "\n")
 
-  # all pred data in a txt file => preddatalog.txt
-    textfile = open("./SegmentLog/preddatalog.txt", "w")
-    for pre in range(len(pred)):
-       textfile.write(str(pred[pre]) + "\n")
-      
+
+ 
   #create .asc file
-    coloredPCFile = open("./SegmentLog/coloredPC.asc", "w")
-    coloredPCFile.write("# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH 2048\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS 2048\nDATA ascii\n")   
-  #counter for segmentresults
-    segmentResultsFile = open("./SegmentLog/segmentResultslog.txt", "w")
-    redc = 0
-    greenc = 0
+    coloredPCFile = open("./SegmentLog/segmentiertePunktwolke.asc", "w")
+    coloredPCFile.write("# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH 2048\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS 2048\nDATA ascii\n") 
+    komplett_array = o3d.utility.Vector3dVector()
+    komplett = o3d.geometry.PointCloud()
+    ## Eck Punkte - Neues numpy Array + o3d. Pointcloud werden hier erstellt
+    ecke_array = o3d.utility.Vector3dVector()
+    ecke = o3d.geometry.PointCloud()
 
- # for i n range
-    # testfile = open("./SegmentLog/test.txt", "w")
-    # colorfile = open("./SegmentLog/colortest.txt", "w")
-    # indzero = open("./SegmentLog/windzero.txt", "w")
-    # indfile = open("./SegmentLog/indfile.txt" , "w")
+    ## Kante - Neues numpy Array + o3d. Pointcloud werden hier erstelllt
+    kante_array = open3d.utility.Vector3dVector()
+    kante = o3d.geometry.PointCloud()
+
     for i in range(v_points.shape[0]):
         xs = v_points[i,0]
         ys = v_points[i,1]
         zs = v_points[i,2]
         ind = pred[i].index(max(pred[i]))   
         ax.scatter(xs, zs, ys, c=color[ind], marker=m[ind])
-        # indfile.write(str(ind) + "\n")
-        # indzero.write(str(v_points[ind] = 0) + "\n")
-        # colorfile.write(str(v_points[ind] = 1) + "\n")
+        komplett_array.append(v_points[i])
+        komplett.points = komplett_array
+        ## maskieren der Punktwolke: 0 = Ecke, 1 = Kante/Strebe
+        # ind = 0 -> Ecke, 
         if color[ind] == 'r':
             rgb = "255 0 0" 
-            redc += 1
+            # Füge am ende der neuen Liste v_points hinzu die ind 1 sind
+            ecke_array.append(v_points[i])
+            # array in o3d PointCloud für clustern umwandeln
+            ecke.points = ecke_array
         elif color[ind] == 'g':
             rgb = "0 255 0"
-            greenc += 1
+            kante_array.append(v_points[i])
+            kante.points = kante_array
+        # Erstellung der .asc Punktwolke für c++ Anwendung
         coloredPCFile.write(str(v_points[i,0].round(4)) + " " + str(v_points[i,1].round(4))+ " " + str(v_points[i,2].round(4)) + " " + rgb + "\n")
-        
-    # ppd = o3d.geometry.PointCloud()
-    # ppd.points = o3d.utility.Vector3dVector(v_points[ind])
-    # print("ppd ")
-    # labels: o3d.utility.IntVector = o3d.geometry.PointCloud.cluster_dbscan(self=(ppd.points), eps=50.0,min_points=100,print_progress="false")
-    # labels = labels + 1
-    #Minimum maximum etc. noch nicht möglich - späteren Verlauf str(0) durch Berechnungen ersetzen
-    # testfile.write(str(v_points[ind == 1]))
-    segmentResultsFile.write("Kategorie: Seite\nMaximum: "+ str(greenc) + 
-    "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0) + "\n\n\n" 
-    )
-    # seg_min = ndimage.minimum(v_points[ind])
-    # seg_max = ndimage.maximum(v_points[ind])
-    # print("min_ " + str(seg_min))
-    # print("max_ " + str(seg_max))
-    segmentResultsFile.write("Kategorie: Ecke\nMaximum: "+ str(redc) + 
-    "\nMinimum " + str(0) + "\nMittelwert: " + str(0) + "\nMedian: " + str(0))
+    
 
+    #######################
+
+    # http://www.open3d.org/docs/release/python_api/open3d.geometry.PointCloud.html
+    #       eps: specifies how close points should be to each other to be considered a part of a cluster.
+    #            It means that if the distance between two points is lower or equal to this value (eps), 
+    #            these points are considered neighbors.
+       
+    # minPoints: the minimum number of points to form a dense region. 
+    #            For example, if we set the minPoints parameter as 5, 
+    #            then we need at least 5 points to form a dense region.
+
+    # Cluster der Ecken
+    labelsEcke: o3d.utility.IntVector = ecke.cluster_dbscan(eps=100.0, min_points=50, print_progress=False)
+    
+    # Cluster der Kanten
+    labelsKante: o3d.utility.IntVector = kante.cluster_dbscan(eps=100.0, min_points=50, print_progress=False)
+   
+   
+
+    # Für die Visualisierung / testen der teilcluster
+    # o3d.visualization.draw_geometries([ecke], zoom=0.455, 
+    #                                   front=[-0.4999,-0.1659, -0.8499],
+    #                                   lookat=[2.1813, 2.0619, 2.0999],
+    #                                   up=[0.1204,-0.9852,0.1215])
+    # o3d.visualization.draw_geometries([kante], zoom=0.455, 
+    #                                   front=[-0.4999,-0.1659, -0.8499],
+    #                                   lookat=[2.1813, 2.0619, 2.0999],
+    #                                   up=[0.1204,-0.9852,0.1215])
+   
+    ###### Segmentierungs Resultate
+
+    # Anzahl Cluster bei ecke müsste 4 sein, -> zählen wie viele verschiedene elemente 
+ 
+    ## Ecke count
+    ecke_ones = labelsEcke.count(1)
+    ecke_zero = labelsEcke.count(0)
+    ecke_two = labelsEcke.count(2)
+    ecke_three = labelsEcke.count(3)
+    ecke_noise = labelsEcke.count(-1)
+
+    ## Kante count
+    kante_ones = labelsKante.count(1)
+    kante_zero = labelsKante.count(0)
+    kante_two = labelsEcke.count(2)
+    kante_three = labelsEcke.count(3)
+    kante_noise = labelsKante.count(-1)
+
+
+    ## Segmentierungsresultate der Ecken
+    if ecke_two > 1:
+      AnzahlCluster = 3
+      seg_ecke_array = [ecke_zero, ecke_ones, ecke_two]
+      ecke_mittelwert = (ecke_zero + ecke_ones + ecke_two) / AnzahlCluster
+    elif ecke_three > 1:
+      AnzahlCluster = 4
+      seg_ecke_array = [ecke_zero, ecke_ones, ecke_two, ecke_three]
+      ecke_mittelwert = (ecke_zero + ecke_ones + ecke_two + ecke_three) / AnzahlCluster
+    else:
+      AnzahlCluster = 2
+      seg_ecke_array = [ecke_zero, ecke_ones]
+    
+    ecke_max = max(seg_ecke_array)
+    ecke_min = min(seg_ecke_array)
+    ecke_mittelwert = statistics.mean(seg_ecke_array)
+    ecke_median = statistics.median_low(map(float, seg_ecke_array))
+ 
+    ## Segmentierungsresultate der Seiten
+    if kante_two > 1:
+      AnzahlCluster = 3
+      seg_kante_array = [kante_zero, kante_ones, kante_two]
+      kante_mittelwert = (kante_zero + kante_ones + kante_two) / AnzahlCluster
+    elif kante_three > 1:
+      AnzahlCluster = 4
+      seg_kante_array = [kante_zero, kante_ones, kante_two, kante_three]
+      kante_mittelwert = (kante_zero + kante_ones + kante_two + kante_three) / AnzahlCluster
+    else:
+      AnzahlCluster = 2
+      seg_kante_array = [kante_zero, kante_ones]
+ 
+    
+    kante_max = max(seg_kante_array)
+    kante_min = min(seg_kante_array)
+    kante_mittelwert = statistics.mean(seg_kante_array)
+    kante_median = statistics.median_low(map(float, seg_kante_array))
+
+
+    ### Segmentierungsresultate.txt
+    segmentResultsFile = open("./SegmentLog/segmentResultslog.txt", "w")
+
+    segmentResultsFile.write("Kategorie: Kante\nAnzahl Kanten: "+ str(AnzahlCluster) +
+    "\nMaximum :" + str(kante_max) +  
+    "\nMinimum :" + str(kante_min) +
+    "\nMittelwert: " + str(kante_mittelwert) +
+    "\nMedian: " + str(kante_median) + 
+    "\nNoise Punkte: "+ str(kante_noise) + "\n\n\n" )
+  
+    segmentResultsFile.write("Kategorie: Ecke\nAnzahl Ecken: "+ str(AnzahlCluster) + 
+    "\nMaximum :" + str(ecke_max) +  
+    "\nMinimum :" + str(ecke_min) +
+    "\nMittelwert: " + str(ecke_mittelwert) +
+    "\nMedian: " + str(ecke_median) +
+    "\nNoise Punkte: " + str(ecke_noise))
+
+    segmentResultsFile.write("\n\n\n\n\n\n\n\nDie Segmentierungsresultate finden Sie im Ordner /SegmentLog")
     # set axis labels and limits
     ax.set_xlim3d(-3100,3100)
     ax.set_ylim3d(-3100,3100)
