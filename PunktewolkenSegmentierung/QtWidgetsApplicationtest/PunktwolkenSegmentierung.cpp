@@ -426,7 +426,7 @@ void PunktwolkenSegmentierung::segmentierung(){
 
     progressBar->setValue(100);
     statusBar->showMessage("Segmentierung beendet.");
-
+    segBtn->setDisabled(true);
     actionSave->setEnabled(true);
     actionSaveAs->setEnabled(true);
     saveBtn->setEnabled(true);
